@@ -59,6 +59,42 @@ class ProviderDashboard extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.grey,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        currentIndex: 0, // home selected by default
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_filled),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle_outline),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble_outline),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: CircleAvatar(
+              radius: 12,
+              backgroundImage: NetworkImage(
+                  'https://via.placeholder.com/150'), // temp avatar
+            ),
+            label: '',
+          ),
+        ],
+        onTap: (index) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Tapped nav item $index')),
+          );
+        },
+      ),
     );
   }
 }
