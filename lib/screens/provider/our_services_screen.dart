@@ -20,10 +20,7 @@ class OurServicesScreen extends StatelessWidget {
           children: [
             ElevatedButton.icon(
               onPressed: () {
-                // Temporary: snackbar (we'll open dialog in next step)
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Add new service tapped')),
-                );
+                _showAddServiceDialog(context);
               },
               icon: const Icon(Icons.add),
               label: const Text("Add New Service"),
@@ -37,17 +34,59 @@ class OurServicesScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Placeholder for service list (coming next)
+            // Service list (empty for now)
             const Expanded(
               child: Center(
                 child: Text(
                   'No services yet. Tap Add New Service to start.',
                   style: TextStyle(fontSize: 18, color: Colors.grey),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showAddServiceDialog(BuildContext context) {
+    showDialog(
+      context: context, // ← this one stays (from showDialog)
+      builder: (context) => AlertDialog(
+        // ← builder gives a new context
+        title: const Text("Add New Service"),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              decoration: const InputDecoration(labelText: "Service Name"),
+            ),
+            TextField(
+              decoration:
+                  const InputDecoration(labelText: "Duration (e.g. 30 min)"),
+            ),
+            TextField(
+              decoration:
+                  const InputDecoration(labelText: "Price (e.g. 2000 LKR)"),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Service added (coming soon)')),
+              );
+            },
+            child: const Text("Save"),
+          ),
+        ],
       ),
     );
   }
