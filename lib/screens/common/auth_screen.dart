@@ -30,15 +30,60 @@ class AuthScreen extends StatelessWidget {
             // Temporary Skip button (we'll replace with real login later)
             ElevatedButton(
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Skipped to dashboard – coming soon'),
-                  ),
-                );
+                if (role == 'provider') {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const ProviderDashboardPlaceholder(),
+                    ),
+                  );
+                } else {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const UserDashboardPlaceholder(),
+                    ),
+                  );
+                }
               },
               child: const Text('Skip Login - Go to Dashboard (Test Mode)'),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class ProviderDashboardPlaceholder extends StatelessWidget {
+  const ProviderDashboardPlaceholder({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0D1117),
+      body: Center(
+        child: Text(
+          'Provider Dashboard - Coming Soon',
+          style: TextStyle(color: Colors.white, fontSize: 28),
+        ),
+      ),
+    );
+  }
+}
+
+class UserDashboardPlaceholder extends StatelessWidget {
+  const UserDashboardPlaceholder({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0D1117),
+      body: Center(
+        child: Text(
+          'User/Driver Dashboard - Coming Soon',
+          style: TextStyle(color: Colors.white, fontSize: 28),
         ),
       ),
     );
