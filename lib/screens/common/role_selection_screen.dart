@@ -1,6 +1,7 @@
 // lib/screens/common/role_selection_screen.dart
 
 import 'package:flutter/material.dart';
+import 'auth_screen.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
   const RoleSelectionScreen({super.key});
@@ -36,11 +37,10 @@ class RoleSelectionScreen extends StatelessWidget {
                   height: 70,
                   child: ElevatedButton(
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Service Provider selected – coming soon',
-                          ),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AuthScreen(role: 'provider'),
                         ),
                       );
                     },
@@ -64,9 +64,10 @@ class RoleSelectionScreen extends StatelessWidget {
                   height: 70,
                   child: ElevatedButton(
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Driver selected – coming soon'),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AuthScreen(role: 'driver'),
                         ),
                       );
                     },
