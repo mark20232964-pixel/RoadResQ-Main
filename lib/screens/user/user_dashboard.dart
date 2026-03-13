@@ -29,12 +29,12 @@ class UserDashboard extends StatelessWidget {
             ),
             child: Column(
               children: [
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           "Location",
                           style: TextStyle(color: Colors.white54, fontSize: 12),
@@ -48,7 +48,7 @@ class UserDashboard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const Icon(
+                    Icon(
                       Icons.error,
                       color: Colors.red,
                       size: 30,
@@ -102,6 +102,43 @@ class UserDashboard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.grey,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        currentIndex: 0, // home selected by default
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite_border),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_bag_outlined),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: CircleAvatar(
+              radius: 12,
+              backgroundImage: NetworkImage(
+                  'https://via.placeholder.com/150'), // temp avatar
+            ),
+            label: '',
+          ),
+        ],
+        onTap: (index) {
+          // Temporary feedback - we can make real navigation later
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Tapped nav item $index')),
+          );
+        },
       ),
     );
   }
