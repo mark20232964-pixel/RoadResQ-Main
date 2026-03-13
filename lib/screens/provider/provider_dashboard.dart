@@ -2,9 +2,15 @@
 
 import 'package:flutter/material.dart';
 
-class ProviderDashboard extends StatelessWidget {
+class ProviderDashboard extends StatefulWidget {
   const ProviderDashboard({super.key});
 
+  @override
+  State<ProviderDashboard> createState() => _ProviderDashboardState();
+}
+
+class _ProviderDashboardState extends State<ProviderDashboard> {
+  int _selectedIndex = 0; // 0 = home selected by default
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +72,7 @@ class ProviderDashboard extends StatelessWidget {
         unselectedItemColor: Colors.grey,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        currentIndex: 0, // home selected by default
+        currentIndex: _selectedIndex, // ← this uses the state variable
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_filled),
@@ -90,9 +96,10 @@ class ProviderDashboard extends StatelessWidget {
           ),
         ],
         onTap: (index) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Tapped nav item $index')),
-          );
+          setState(() {
+            _selectedIndex =
+                index; // this makes the selected icon highlight in black
+          });
         },
       ),
     );
