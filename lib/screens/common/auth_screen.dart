@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import '../user/user_dashboard.dart';
+import '../provider/provider_dashboard.dart';
 
 class AuthScreen extends StatelessWidget {
   final String role;
@@ -97,16 +98,14 @@ class AuthScreen extends StatelessWidget {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          const ProviderDashboardPlaceholder(),
-                    ),
+                        builder: (context) =>
+                            const ProviderDashboard()), // ← change to real one
                   );
                 } else {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const UserDashboard(),
-                    ),
+                        builder: (context) => const UserDashboard()),
                   );
                 }
               },
