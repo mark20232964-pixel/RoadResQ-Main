@@ -1,4 +1,8 @@
 
+// UserProfileScreen - Displays user info, edit profile dialog, list options, logout
+// Navigation: from dashboard avatar icon → here
+// Features: editable name/email, list tiles, bottom nav with highlight
+
 import 'package:flutter/material.dart';
 import '../common/role_selection_screen.dart';
 
@@ -84,7 +88,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       body: SingleChildScrollView(
   child: Column(
     children: [
-      const SizedBox(height: 20),
+      const SizedBox(height: 40),
 
       // Profile photo + camera overlay
       Center(
@@ -176,7 +180,7 @@ _buildTile(Icons.help_outline, "Support Center", () {
 }),
 const SizedBox(height: 20),
 
-// Logout tile
+// TODO: Add confirmation dialog before logout
 _buildTile(Icons.logout, "Log out", () {
   Navigator.pushAndRemoveUntil(
     context,
