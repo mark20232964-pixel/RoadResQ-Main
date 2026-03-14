@@ -1,6 +1,7 @@
 // lib/screens/provider/provider_dashboard.dart
 
 import 'package:flutter/material.dart';
+import 'our_services_screen.dart';
 
 class ProviderDashboard extends StatefulWidget {
   const ProviderDashboard({super.key});
@@ -52,9 +53,11 @@ class _ProviderDashboardState extends State<ProviderDashboard> {
                 const SizedBox(height: 15),
                 GestureDetector(
                   onTap: () {
-                    // Temporary: snackbar (we'll connect to real OurServicesScreen later)
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Our Services tapped')),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const OurServicesScreen(),
+                      ),
                     );
                   },
                   child: _buildMenuCard(
