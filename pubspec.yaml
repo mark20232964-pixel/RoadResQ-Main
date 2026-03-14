@@ -12,11 +12,15 @@ dependencies:
   flutter:
     sdk: flutter
 
+  
+
   # For persistent storage (used in Our Services screen)
   shared_preferences: ^2.3.0
 
   # Optional: for Cupertino-style widgets (iOS-like look on Android too)
   cupertino_icons: ^1.0.8
+  firebase_core: ^2.32.0
+  cloud_firestore: ^4.17.5
 
 dev_dependencies:
   flutter_test:
