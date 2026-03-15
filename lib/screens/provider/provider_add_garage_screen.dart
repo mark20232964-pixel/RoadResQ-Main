@@ -40,7 +40,7 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
   }
 
   void _submitGarage() {
-    // Fake submission (you can later connect to Firebase here)
+    // Fake submission 
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -225,8 +225,28 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
 
             const SizedBox(height: 32),
 
-          ]
-      )
+            // Add Garage Button (purple as in your design)
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: _submitGarage,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6A48FF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  'Add Garage',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            const SizedBox(height: 40),
+          ],
+        ),
+      ),
     );
   }
 }
