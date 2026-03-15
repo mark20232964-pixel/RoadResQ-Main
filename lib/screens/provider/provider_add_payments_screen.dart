@@ -189,6 +189,29 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
 
             const SizedBox(height: 48),
 
+            // Submit Button
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: _submitCharges,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6A48FF),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'SUBMIT',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
             ],
           ),
         ),
