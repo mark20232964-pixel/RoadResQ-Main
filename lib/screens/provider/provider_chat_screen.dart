@@ -31,4 +31,41 @@ class _ChatScreenState extends State<ChatScreen> {
         text: 'I\'m sorry to hear that. Let me check that for you. Have you tried restarting the app or your device to see if that resolves the issue?',
         isSent: false),
   ];
-}
+
+  void _sendMessage() {
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
+    setState(() {
+      _messages.add(ChatMessage(text: text, isSent: true));
+      _controller.clear();
+    });
+    Future.delayed(const Duration(milliseconds: 100), () {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          _buildHeader("User"),
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) => _buildBubble(_messages[index]),
+            ),
+          ),
+          _buildInputBar(),
+        ],
+      ),
+      bottomNavigationBar: _buildBottomNav(),
+    );
+  }
