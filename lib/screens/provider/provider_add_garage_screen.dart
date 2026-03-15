@@ -142,6 +142,36 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
             ),
             const SizedBox(height: 24),
 
+            // Service Categories (exactly matching Figma layout)
+            const Text(
+              'Service Categories',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 16,
+              runSpacing: 8,
+              children: _serviceCategories.keys.map((service) {
+                return SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.42,
+                  child: CheckboxListTile(
+                    title: Text(service, style: const TextStyle(fontSize: 15)),
+                    value: _serviceCategories[service],
+                    activeColor: const Color(0xFF6A48FF),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _serviceCategories[service] = value ?? false;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                );
+              }).toList(),
+            ),
+
+            const SizedBox(height: 32),
+
           ]
       )
     );
