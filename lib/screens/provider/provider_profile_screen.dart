@@ -1,35 +1,32 @@
 import 'package:flutter/material.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  // These variables are now visible inside the state class
+  String _providerName = "Provider Name";
+  String _providerEmail = "provider@example.com";
+
+  // ← your _showEditProfileDialog method can go here later
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0, // no shadow
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          "Profile",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
+          // your AppBar code from commit 2...
           ),
-        ),
-        centerTitle: true,
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 40), // space from top/AppBar
+            const SizedBox(height: 40),
 
-            // Profile photo with camera overlay
+            // Profile photo (from commit 3)
             Center(
               child: Stack(
                 children: [
@@ -75,15 +72,28 @@ class ProfileScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // Name and email placeholders (will be dynamic later)
-            const Text(
-              "Provider Name",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            // Name and email — now using variables (no more red error)
+            Text(
+              _providerName,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            const Text(
-              "provider@example.com",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+            Text(
+              _providerEmail,
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+
+            // "Edit profile" button (add this if not there yet)
+            TextButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Edit profile tapped')),
+                );
+              },
+              child: const Text(
+                "Edit profile",
+                style: TextStyle(color: Color(0xFF6A48FF)),
+              ),
             ),
           ],
         ),
