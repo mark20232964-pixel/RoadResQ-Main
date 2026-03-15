@@ -27,7 +27,20 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
           foregroundColor: Colors.white,
           elevation: 0,
         ),
-        body: const Center(child: Text('Form coming soon')),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Adding charges for\n${widget.customerName}",
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 24),
+              // fields will come here
+            ],
+          ),
+        ),
     );
   }
 }
