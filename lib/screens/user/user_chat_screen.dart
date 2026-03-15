@@ -71,3 +71,21 @@ List<ChatMessage> _messages = [
       text: 'I\'m sorry to hear that. Let me check that for you. Have you tried restarting the app or your device to see if that resolves the issue?',
       isSent: false),
 ];
+
+Widget _buildHeader(String name) {
+  return Container(
+    padding: const EdgeInsets.only(top: 60, left: 20, right: 20, bottom: 20),
+    color: Colors.white,
+    child: Row(
+      children: [
+        const BackButton(),
+        const CircleAvatar(
+          radius: 18,
+          backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=12'),
+        ),
+        const SizedBox(width: 10),
+        Text(name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+      ],
+    ),
+  );
+}
