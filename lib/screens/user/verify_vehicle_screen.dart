@@ -92,56 +92,71 @@ class _VerifyVehicleScreenState extends State<VerifyVehicleScreen> {
     // Placeholder for brand list (next commit)
     // Brand list for selected type
 Expanded(
-  child: ListView.builder(
-    padding: const EdgeInsets.symmetric(horizontal: 16),
-    itemCount: brands[selectedType]!.length,
-    itemBuilder: (context, index) {
-      final brand = brands[selectedType]![index];
-      return Card(
-        color: Colors.white,
-        margin: const EdgeInsets.only(bottom: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: ListTile(
-          leading: CircleAvatar(
-            radius: 30,
-            backgroundColor: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.network(
-                brand['logo']!,
-                fit: BoxFit.contain,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6A48FF)),
+  child: Builder(
+    builder: (context) {
+      final selectedBrands = brands[selectedType] ?? [];
+
+      if (selectedBrands.isEmpty) {
+        return const Center(
+          child: Text(
+            'No brands available for this type',
+            style: TextStyle(fontSize: 18, color: Colors.grey),
+          ),
+        );
+      }
+
+      return ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: selectedBrands.length,
+        itemBuilder: (context, index) {
+          final brand = selectedBrands[index];
+          return Card(
+            color: Colors.white,
+            margin: const EdgeInsets.only(bottom: 12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: ListTile(
+              leading: CircleAvatar(
+                radius: 30,
+                backgroundColor: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.network(
+                    brand['logo']!,
+                    fit: BoxFit.contain,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6A48FF)),
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.car_repair,
+                      color: Colors.grey,
+                      size: 40,
                     ),
-                  );
-                },
-                errorBuilder: (context, error, stackTrace) => const Icon(
-                  Icons.car_repair,
-                  color: Colors.grey,
+                  ),
                 ),
               ),
+              title: Text(
+                brand['name']!,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Tapped ${brand['name']}')),
+                );
+              },
             ),
-          ),
-          title: Text(
-            brand['name']!,
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-          onTap: () {
-            // TODO: Navigate to next screen or show details
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Tapped ${brand['name']}')),
-            );
-          },
-        ),
+          );
+        },
       );
     },
   ),
