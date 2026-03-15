@@ -170,8 +170,42 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
               }).toList(),
             ),
 
-
-
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: () {
+                  // fake success dialog
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      backgroundColor: const Color(0xFFE6F4E6),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.check_circle, color: Colors.green, size: 80),
+                          const SizedBox(height: 16),
+                          const Text('Success!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                          const Text('Garage Added. Thank You!'),
+                          const SizedBox(height: 24),
+                          ElevatedButton(
+                          onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
+                          child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6A48FF),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text('Add Garage', style: TextStyle(fontSize: 18)),
+              ),
+            ),
           ],
         ),
       ),
