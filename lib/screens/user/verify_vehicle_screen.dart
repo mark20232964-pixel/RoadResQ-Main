@@ -1,3 +1,8 @@
+// verify_vehicle_screen.dart
+// Screen for verifying vehicle type and brand selection
+// Features: horizontal tab bar for vehicle types, dynamic brand list with logos,
+// loading/error/empty states, bottom navigation bar (interactive)
+// Navigation: from user dashboard → here (e.g. on "Verify vehicle" tile tap)
 import 'package:flutter/material.dart';
 
 class VerifyVehicleScreen extends StatefulWidget {
