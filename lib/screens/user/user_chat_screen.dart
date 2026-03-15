@@ -260,3 +260,25 @@ Widget _buildInputBar() {
     ),
   );
 }
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Colors.white,
+    body: Column(
+      children: [
+        _buildHeader('Alex'),
+        Expanded(
+          child: ListView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            itemCount: _messages.length,
+            itemBuilder: (context, index) => _buildBubble(_messages[index]),
+          ),
+        ),
+        _buildInputBar(),
+      ],
+    ),
+    bottomNavigationBar: _buildBottomNav(),
+  );
+}
