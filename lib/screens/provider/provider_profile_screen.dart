@@ -12,7 +12,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _providerName = "Provider Name";
   String _providerEmail = "provider@example.com";
 
-  // ← your _showEditProfileDialog method can go here later
+  void _showEditProfileDialog() {
+    final nameController = TextEditingController(text: _providerName);
+    final emailController = TextEditingController(text: _providerEmail);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Edit Profile"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: "Full Name"),
+            ),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(labelText: "Email"),
+              keyboardType: TextInputType.emailAddress,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _providerName = nameController.text.trim().isNotEmpty
+                    ? nameController.text
+                    : _providerName;
+                _providerEmail = emailController.text.trim().isNotEmpty
+                    ? emailController.text
+                    : _providerEmail;
+              });
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6A48FF),
+            ),
+            child: const Text("Save", style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,11 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             // "Edit profile" button (add this if not there yet)
             TextButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Edit profile tapped')),
-                );
-              },
+              onPressed: _showEditProfileDialog,
               child: const Text(
                 "Edit profile",
                 style: TextStyle(color: Color(0xFF6A48FF)),
