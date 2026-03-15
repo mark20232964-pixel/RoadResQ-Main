@@ -17,6 +17,22 @@ class AddChargesScreen extends StatefulWidget {
 }
 
 class _AddChargesScreenState extends State<AddChargesScreen> {
+
+  String? _selectedService;
+  final TextEditingController _priceController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedService = widget.serviceName; // Pre-fill from the request
+  }
+
+  @override
+  void dispose() {
+    _priceController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
