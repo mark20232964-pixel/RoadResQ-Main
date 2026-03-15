@@ -204,8 +204,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
-
-      // COMMIT 8: Added bottom navigation bar here
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
@@ -218,10 +216,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           setState(() {
             _selectedIndex = index;
           });
-          // Temporary snackbar (removed in future commits if not needed)
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Tapped nav item $index')),
-          );
+          // Removed temporary snackbar (cleaner look)
+          // You can add it back if you want feedback
         },
         items: const [
           BottomNavigationBarItem(
