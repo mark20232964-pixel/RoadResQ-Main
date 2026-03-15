@@ -19,6 +19,16 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
   final _descriptionController = TextEditingController();
 
   @override
+  void dispose() {
+    _nameController.dispose();
+    _addressController.dispose();
+    _contactController.dispose();
+    _emailController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
