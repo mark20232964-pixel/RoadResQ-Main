@@ -40,7 +40,24 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
         padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [],
+          children: [
+            //Add Garage
+            const SizedBox(height: 20),
+            const Text('Garage Name', style: TextStyle(fontWeight: FontWeight.bold)),
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                hintText: 'e.g. ABC Motors',
+                filled: true,
+                fillColor: const Color(0xFFF5F5F5),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+
+          ],
         ),
       ),
     );
