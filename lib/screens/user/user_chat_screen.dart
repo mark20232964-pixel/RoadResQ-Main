@@ -109,3 +109,24 @@ Widget _buildBubble(ChatMessage msg) {
     ),
   );
 }
+
+Widget _buildInputBar() {
+  return Container(
+    color: Colors.black,
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    child: Row(
+      children: [
+        IconButton(icon: const Icon(Icons.attach_file, color: Colors.white54), onPressed: () {}),
+        Expanded(
+          child: TextField(
+            controller: _controller,
+            decoration: const InputDecoration(hintText: 'Write here...'),
+            onSubmitted: (_) => _sendMessage(),
+          ),
+        ),
+        IconButton(icon: const Icon(Icons.mic, color: Colors.white54), onPressed: () {}),
+        IconButton(icon: const Icon(Icons.send, color: Colors.white70), onPressed: _sendMessage),
+      ],
+    ),
+  );
+}
