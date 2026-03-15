@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 class AddGarageScreen extends StatelessWidget {
   const AddGarageScreen({super.key});
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Add a Garage'),
         backgroundColor: const Color(0xFF1B1B4B),
