@@ -6,12 +6,14 @@ class EditProfileScreen extends StatefulWidget {
   final String initialName;
   final String initialEmail;
   final String? intialPhone;
+  final DateTime? initialDob;
 
   const EditProfileScreen({
     super.key,
     required this.initialName,
     required this.initialEmail,
-    this.intialPhone,
+    required this.intialPhone,
+    required this.initialDob,
   });
 
   @override
@@ -23,8 +25,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
+  late TextEditingController _dobController;
 
   String? _profileImageUrl; // for preview (later Firebase Storage)
+  DateTime? _selectedDob;
 
   @override
   void initState() {
@@ -32,6 +36,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameController = TextEditingController(text: widget.initialName);
     _emailController = TextEditingController(text: widget.initialEmail);
     _phoneController = TextEditingController(text: widget.intialPhone ?? '');
+    _dobController = TextEditingController(
+      text: widget.initialDob != null
+          ? "${widget.initialDob!.day}/${widget.initialDob!.month}/${widget.initialDob!.year}"
+          : '',
+    );
+      _selectedDob = widget.initialDob;
   }
 
   @override
@@ -39,7 +49,35 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _dobController.dispose();
     super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDob ?? DateTime.now().subtract(const Duration(days: 365 * 18)),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: const ColorScheme.light(primary: Color(0xFF6A48FF)),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(foregroundColor: const Color(0xFF6A48FF)),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null && picked != _selectedDob) {
+      setState(() {
+        _selectedDob = picked;
+        _dobController.text = "${picked.day}/${picked.month}/${picked.year}";
+      });
+    }
   }
 
   @override
@@ -156,6 +194,31 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
 
             const SizedBox(height: 20),
+
+            // Date of Birth (tap to open picker)
+            GestureDetector(
+              onTap: () => _selectDate(context),
+              child: AbsorbPointer(
+                child: TextField(
+                  controller: _dobController,
+                  decoration: InputDecoration(
+                    labelText: 'Date of Birth',
+                    hintText: 'DD/MM/YYYY',
+                    labelStyle: const TextStyle(color: Color(0xFF6A48FF)),
+                    filled: true,
+                    fillColor: const Color(0xFFF5F5F5),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    suffixIcon: const Icon(Icons.calendar_today, color: Color(0xFF6A48FF)),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 48),
+
           ],
         ),
       ),
