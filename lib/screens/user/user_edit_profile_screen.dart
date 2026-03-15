@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 class EditProfileScreen extends StatefulWidget {
   final String initialName;
   final String initialEmail;
+  final String? intialPhone;
 
   const EditProfileScreen({
     super.key,
     required this.initialName,
     required this.initialEmail,
+    this.intialPhone,
   });
 
   @override
@@ -20,6 +22,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   late TextEditingController _nameController;
   late TextEditingController _emailController;
+  late TextEditingController _phoneController;
 
   String? _profileImageUrl; // for preview (later Firebase Storage)
 
@@ -28,12 +31,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.initState();
     _nameController = TextEditingController(text: widget.initialName);
     _emailController = TextEditingController(text: widget.initialEmail);
+    _phoneController = TextEditingController(text: widget.intialPhone ?? '');
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
@@ -121,6 +126,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 labelText: 'Email',
+                labelStyle: const TextStyle(color: Color(0xFF6A48FF)),
+                filled: true,
+                fillColor: const Color(0xFFF5F5F5),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Phone Number
+            TextField(
+              controller: _phoneController,
+              keyboardType: TextInputType.phone,
+              decoration: InputDecoration(
+                labelText: 'Phone Number',
+                hintText: '+94XXXXXXXXX',
                 labelStyle: const TextStyle(color: Color(0xFF6A48FF)),
                 filled: true,
                 fillColor: const Color(0xFFF5F5F5),
