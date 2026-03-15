@@ -17,6 +17,9 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+
+  String? _profileImageUrl; // for preview (later Firebase Storage)
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
