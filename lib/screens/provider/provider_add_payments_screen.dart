@@ -33,6 +33,24 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
     super.dispose();
   }
 
+  void _submitCharges() {
+    final priceText = _priceController.text.trim();
+
+    if (priceText.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter the price')),
+      );
+      return;
+    }
+
+    if (_selectedService == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a service')),
+      );
+      return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,7 +136,7 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
             ),
 
             const SizedBox(height: 48),
-            
+
             ],
           ),
         ),
