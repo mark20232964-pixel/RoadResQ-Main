@@ -112,6 +112,7 @@ Expanded(
           final brand = selectedBrands[index];
           return Card(
             color: Colors.white,
+            elevation: 2,
             margin: const EdgeInsets.only(bottom: 12),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             child: ListTile(
@@ -150,10 +151,16 @@ Expanded(
               ),
               trailing: const Icon(Icons.chevron_right, color: Colors.grey),
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Tapped ${brand['name']}')),
-                );
-              },
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        'Selected ${brand['name']} for $selectedType - Details coming soon',
+      ),
+      duration: const Duration(seconds: 3),
+    ),
+  );
+  // TODO: Later: Navigator.push to brand details screen
+},
             ),
           );
         },
