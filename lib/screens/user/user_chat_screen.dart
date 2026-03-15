@@ -21,3 +21,20 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 }
+
+class _ChatScreenState extends State<ChatScreen> {
+  final TextEditingController _controller = TextEditingController();
+  List<ChatMessage> _messages = [];
+
+  void _sendMessage() {
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
+    setState(() {
+      _messages.add(ChatMessage(text: text, isSent: true));
+      _controller.clear();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => const Scaffold(body: SizedBox.shrink());
+}
