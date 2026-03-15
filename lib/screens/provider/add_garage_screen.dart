@@ -10,9 +10,15 @@ class AddGarageScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add a Garage'),
+        backgroundColor: const Color(0xFF1B1B4B),
+        foregroundColor: Colors.white,
+        elevation: 0,
       ),
-      body: const Center(
-        child: Text('Add Garage screen - coming soon'),
+      body: const SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Center(
+          child: Text('Add Garage screen - coming soon'),
+        ),
       ),
     );
   }
