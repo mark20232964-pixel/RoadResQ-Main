@@ -38,3 +38,21 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) => const Scaffold(body: SizedBox.shrink());
 }
+
+final ScrollController _scrollController = ScrollController();
+
+void _sendMessage() {
+  final text = _controller.text.trim();
+  if (text.isEmpty) return;
+  setState(() {
+    _messages.add(ChatMessage(text: text, isSent: true));
+    _controller.clear();
+  });
+  Future.delayed(const Duration(milliseconds: 100), () {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  });
+}
