@@ -20,7 +20,12 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      body: Center(child: Text('Add Garage Screen - coming soon')),
+      body: const SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children:[]
+      )
     );
   }
 }
