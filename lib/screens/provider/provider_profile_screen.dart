@@ -13,6 +13,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _providerName = "Provider Name";
   String _providerEmail = "provider@example.com";
 
+  // Bottom nav selected index — starts with profile tab highlighted
+  int _selectedIndex = 3; // 3 = profile avatar
+
   // Edit profile dialog (from previous commit)
   void _showEditProfileDialog() {
     final nameController = TextEditingController(text: _providerName);
@@ -187,7 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               );
             }),
 
-            // COMMIT 7: Added logout tile here
+            // Commit 7: Logout tile
             const SizedBox(height: 20),
 
             _buildTile(Icons.logout, "Log out", () {
@@ -195,11 +198,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => const RoleSelectionScreen()),
-                (route) => false, // clears entire stack — full logout
+                (route) => false,
               );
             }),
           ],
         ),
+      ),
+
+      // COMMIT 8: Added bottom navigation bar here
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        selectedItemColor: const Color(0xFF6A48FF),
+        unselectedItemColor: Colors.black,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+          // Temporary snackbar (removed in future commits if not needed)
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Tapped nav item $index')),
+          );
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_filled),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle_outline),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble_outline),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: CircleAvatar(
+              radius: 16,
+              backgroundColor: Color(0xFF6A48FF),
+              child: Icon(Icons.person, color: Colors.white, size: 20),
+            ),
+            label: '',
+          ),
+        ],
       ),
     );
   }
