@@ -154,13 +154,22 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                 const SizedBox(height: 16),
 
                 // Contact Number
+                const Text('Contact Number', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 18)),
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _contactController,
-                  decoration: const InputDecoration(labelText: 'Contact Number'),
+                  cursorColor: const Color(0xFF6A48FF),
                   keyboardType: TextInputType.phone,
-                  validator: (v) => v!.isEmpty ? 'Required' : null,
+                  style: const TextStyle(color: Colors.black87, fontSize: 16),
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) return 'Required';
+                    if (v.length < 9) return 'Too short';
+                    return null;
+                  },
+                  decoration: _inputDecoration('e.g. 0778404504'),
                 ),
                 const SizedBox(height: 16),
+
 
                 // Email
                 TextFormField(
