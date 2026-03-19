@@ -130,10 +130,14 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Garage Name
+                const Text('Garage Name', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 18)),
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'Garage Name'),
-                  validator: (v) => v!.isEmpty ? 'Required' : null,
+                  cursorColor: const Color(0xFF6A48FF),
+                  style: const TextStyle(color: Colors.black87, fontSize: 16),
+                  validator: (v) => v?.trim().isEmpty ?? true ? 'Required' : null,
+                  decoration: _inputDecoration('e.g. ABC Motors'),
                 ),
                 const SizedBox(height: 16),
 
