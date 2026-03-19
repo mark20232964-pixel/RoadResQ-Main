@@ -17,6 +17,16 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
   final _emailController = TextEditingController();
   final _descriptionController = TextEditingController();
 
+  final Map<String, bool> _serviceCategories = {
+    'Towing': true,
+    'Battery Replacement': false,
+    'Tire Change': false,
+    'Fuel Delivery': false,
+    'Jump Start': true,
+    'Emergency Repair': true,
+    'Other': false,
+  };
+
   @override
   void dispose() {
     _nameController.dispose();
