@@ -56,6 +56,15 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                 ),
                 const SizedBox(height: 16),
 
+                // Contact Number
+                TextFormField(
+                  controller: _contactController,
+                  decoration: const InputDecoration(labelText: 'Contact Number'),
+                  keyboardType: TextInputType.phone,
+                  validator: (v) => v!.isEmpty ? 'Required' : null,
+                ),
+                const SizedBox(height: 16),
+
 
               ],
             ),
