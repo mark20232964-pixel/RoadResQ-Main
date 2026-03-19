@@ -259,7 +259,7 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                             child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
                         : const Text(
-                            'SUBMIT',
+                            'ADD GARAGE',
                             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                   ),
