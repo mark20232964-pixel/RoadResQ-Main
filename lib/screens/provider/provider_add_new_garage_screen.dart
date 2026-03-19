@@ -55,6 +55,28 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
     }
 
     setState(() => _isLoading = true);
+
+    // ── TODO: Replace with real API / Firebase call ────────────────
+    await Future.delayed(const Duration(seconds: 2)); // fake delay
+
+    setState(() => _isLoading = false);
+
+    if (!mounted) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFFE6F4E6),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircleAvatar(
+              radius: 40,
+              backgroundColor: Colors.green,
+              child: Icon(Icons.check, color: Colors.white, size: 50),
+            ),
   }
 
   @override
