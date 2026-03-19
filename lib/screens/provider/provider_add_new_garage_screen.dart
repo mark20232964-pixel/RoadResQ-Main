@@ -37,6 +37,24 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
     super.dispose();
   }
 
+  Future<void> _submitGarage() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final selectedServices = _serviceCategories.entries
+        .where((e) => e.value)
+        .map((e) => e.key)
+        .toList();
+
+    if (selectedServices.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select at least one service')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
