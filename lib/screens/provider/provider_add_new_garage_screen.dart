@@ -170,13 +170,22 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                 ),
                 const SizedBox(height: 16),
 
-
                 // Email
+                const Text('Email Address', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 18)),
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  cursorColor: const Color(0xFF6A48FF),
                   keyboardType: TextInputType.emailAddress,
-                  validator: (v) => v!.isEmpty ? 'Required' : null,
+                  style: const TextStyle(color: Colors.black87, fontSize: 16),
+                  validator: (v) {
+                    if (v == null || v.isEmpty) return null; // optional
+                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(v)) {
+                      return 'Invalid email';
+                    }
+                    return null;
+                  },
+                  decoration: _inputDecoration('e.g. abc@gmail.com'),
                 ),
                 const SizedBox(height: 16),
 
