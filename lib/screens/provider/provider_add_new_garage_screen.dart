@@ -106,7 +106,14 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                     );
                   }).toList(),
                 ),
+
                 const SizedBox(height: 24),
+
+                // Submit Button
+                ElevatedButton(
+                  onPressed: _submitGarage,
+                  child: const Text('Submit'),
+                ),
               ],
             ),
           ),
