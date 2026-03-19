@@ -33,8 +33,16 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
       appBar: AppBar(
         title: const Text('Add a Garage'),
       ),
-      body: const Center(
-        child: Text('Add Garage Screen'),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: const [],
+            ),
+          ),
+        ),
       ),
     );
   }
