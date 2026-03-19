@@ -46,9 +46,16 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                   decoration: const InputDecoration(labelText: 'Garage Name'),
                   validator: (v) => v!.isEmpty ? 'Required' : null,
                 ),
-
                 const SizedBox(height: 16),
-                
+
+                // Address
+                TextFormField(
+                  controller: _addressController,
+                  decoration: const InputDecoration(labelText: 'Address'),
+                  validator: (v) => v!.isEmpty ? 'Required' : null,
+                ),
+                const SizedBox(height: 16),
+
 
               ],
             ),
