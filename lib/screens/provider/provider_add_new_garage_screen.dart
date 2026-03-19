@@ -203,22 +203,39 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                 const SizedBox(height: 20),
 
                 // Service Categories
-                Column(
-                  children: _serviceCategories.keys.map((service) {
-                    return CheckboxListTile(
-                      title: Text(service),
-                      value: _serviceCategories[service],
-                      onChanged: (val) {
-                        setState(() {
-                          _serviceCategories[service] = val!;
-                        });
-                      },
+                const Text('Service Categories', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black87)),
+                const SizedBox(height: 8),
+
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final crossCount = constraints.maxWidth > 500 ? 3 : 2;
+                    return GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: crossCount,
+                      childAspectRatio: 3.8,
+                      mainAxisSpacing: 0,
+                      crossAxisSpacing: 8,
+                      children: _serviceCategories.keys.map((service) {
+                        return CheckboxListTile(
+                          title: Text(service, style: const TextStyle(fontSize: 15)),
+                          value: _serviceCategories[service]!,
+                          dense: true,
+                          activeColor: const Color(0xFF6A48FF),
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _serviceCategories[service] = value ?? false;
+                            });
+                          },
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
+                        );
+                      }).toList(),
                     );
-                  }).toList(),
+                  },
                 ),
 
                 const SizedBox(height: 24),
-
                 // Submit Button
                 ElevatedButton(
                   onPressed: _submitGarage,
