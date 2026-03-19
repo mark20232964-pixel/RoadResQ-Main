@@ -65,6 +65,15 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                 ),
                 const SizedBox(height: 16),
 
+                // Email
+                TextFormField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(labelText: 'Email'),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (v) => v!.isEmpty ? 'Required' : null,
+                ),
+                const SizedBox(height: 16),
+
 
               ],
             ),
