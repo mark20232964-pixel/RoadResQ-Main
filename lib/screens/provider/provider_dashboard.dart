@@ -104,9 +104,12 @@ class _ProviderDashboardState extends State<ProviderDashboard> {
             // navigate to Add Garage screen when "+" is tapped
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const AddGarageScreen()),
+              MaterialPageRoute(
+                builder: (context) => const AddGarageScreen(),
+              ),
             );
-          } else {
+            return;
+          }
           setState(() {
             _selectedIndex =
                 index; // this makes the selected icon highlight in black
