@@ -28,6 +28,7 @@ class ScheduleTimeScreen extends StatefulWidget {
   @override
   State<ScheduleTimeScreen> createState() => _ScheduleTimeScreenState();
 }
+
 class _ScheduleTimeScreenState extends State<ScheduleTimeScreen> {
   // Selected dates
   final Set<int> _selectedDates = {};
@@ -80,7 +81,6 @@ class _ScheduleTimeScreenState extends State<ScheduleTimeScreen> {
                     const SizedBox(height: 20),
                     _buildActionButtons(),
                     const SizedBox(height: 12),
-                    _buildReadMore(),
                   ],
                 ),
               ),
@@ -91,6 +91,7 @@ class _ScheduleTimeScreenState extends State<ScheduleTimeScreen> {
       ),
     );
   }
+
   Widget _buildTopBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -120,6 +121,7 @@ class _ScheduleTimeScreenState extends State<ScheduleTimeScreen> {
       ),
     );
   }
+
   Widget _buildTimePickers() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -377,6 +379,7 @@ class _ScheduleTimeScreenState extends State<ScheduleTimeScreen> {
       ],
     );
   }
+
   Widget _buildDayLabels() {
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     return Row(
@@ -536,6 +539,7 @@ class _ScheduleTimeScreenState extends State<ScheduleTimeScreen> {
 
     return cell;
   }
+
   Widget _buildActionButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
