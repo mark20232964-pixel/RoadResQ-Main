@@ -78,8 +78,21 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.customerName),
-                Text('Mechanic: ${widget.mechanicName}'),
+                // Header with customer and mechanic info
+                Text(
+                  widget.customerName,
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Mechanic: ${widget.mechanicName}',
+                  style: const TextStyle(fontSize: 16, color: Colors.black54),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+                const SizedBox(height: 32),
               ],
             ),
           ),
