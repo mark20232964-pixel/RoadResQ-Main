@@ -536,3 +536,54 @@ class _ScheduleTimeScreenState extends State<ScheduleTimeScreen> {
 
     return cell;
   }
+  Widget _buildActionButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        OutlinedButton(
+          onPressed: () => Navigator.of(context).maybePop(),
+          style: OutlinedButton.styleFrom(
+            side: BorderSide(color: Colors.grey.shade400),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+          ),
+          child: const Text(
+            'Cancel',
+            style: TextStyle(color: Colors.black87, fontSize: 15),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {},
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 12),
+          ),
+          child: const Text('Done', style: TextStyle(fontSize: 15)),
+        ),
+      ],
+    );
+  }
+
+
+  Widget _buildBookNowButton() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF1A1A2E),
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+        ),
+        child: const Text(
+          'Book Now',
+          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, letterSpacing: 0.3),
+        ),
+      ),
+    );
+  }
+}
