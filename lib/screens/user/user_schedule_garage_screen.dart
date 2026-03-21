@@ -91,3 +91,32 @@ class _ScheduleTimeScreenState extends State<ScheduleTimeScreen> {
       ),
     );
   }
+  Widget _buildTopBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () {},
+            child: const Icon(Icons.chevron_left, size: 28, color: Colors.black87),
+          ),
+          const Expanded(
+            child: Center(
+              child: Text(
+                'Schedule time',
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {},
+            child: const Icon(Icons.favorite_border, size: 24, color: Colors.black87),
+          ),
+        ],
+      ),
+    );
+  }
