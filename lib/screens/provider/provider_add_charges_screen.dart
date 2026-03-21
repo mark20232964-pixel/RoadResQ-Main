@@ -137,6 +137,13 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
       appBar: AppBar(
         title: const Text('Add Charges'),
         backgroundColor: const Color(0xFF1B1B4B),
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
