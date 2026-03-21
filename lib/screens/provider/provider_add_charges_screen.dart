@@ -77,7 +77,7 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
     FocusScope.of(context).unfocus();
 
     // TODO: Save to Firebase / backend here
-    await Future.delayed(const Duration(seconds: 1)); // fake delay
+    await Future.delayed(const Duration(seconds: 1)); // fake delay for demo
 
     setState(() => _isLoading = false);
 
@@ -132,6 +132,8 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isOtherSelected = _selectedService == 'Other';
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -153,6 +155,7 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
                 // Header with customer and mechanic info
                 Text(
                   widget.customerName,
@@ -241,7 +244,7 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
 
                 const SizedBox(height: 24),
 
-                // Price
+                // Price input field
                 const Text(
                   'Price (LKR)',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
@@ -274,7 +277,7 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
                 ),
                 const SizedBox(height: 48),
 
-                // Submit button
+                // Submit button 
                 SizedBox(
                   width: double.infinity,
                   height: 56,
