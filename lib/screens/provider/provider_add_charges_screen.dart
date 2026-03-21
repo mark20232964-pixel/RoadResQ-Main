@@ -130,8 +130,6 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -269,6 +267,30 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
                 ),
                 const SizedBox(height: 48),
 
+                // Submit button
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _submitCharges,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6A48FF),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      elevation: _isLoading ? 0 : 2,
+                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+                          )
+                        : const Text(
+                            'SUBMIT',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                  ),
+                ),
               ],
             ),
           ),
