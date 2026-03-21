@@ -132,7 +132,40 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
                   },
                   validator: (value) => value == null ? 'Please select a service' : null,
                 ),
-                
+
+                // Custom service field – only visible when "Other" is selected
+                if (isOtherSelected) ...[
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Custom Service Name',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _customServiceController,
+                    style: const TextStyle(color: Colors.black87),
+                    decoration: InputDecoration(
+                      hintText: 'e.g. Oil Change, AC Repair',
+                      hintStyle: const TextStyle(color: Colors.black54),
+                      filled: true,
+                      fillColor: const Color(0xFFF5F5F5),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    ),
+                    validator: (value) {
+                      if (isOtherSelected && (value == null || value.trim().isEmpty)) {
+                        return 'Please enter the custom service name';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+
+                const SizedBox(height: 24),
+
               ],
             ),
           ),
