@@ -377,3 +377,162 @@ class _ScheduleTimeScreenState extends State<ScheduleTimeScreen> {
       ],
     );
   }
+  Widget _buildDayLabels() {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: days.map((d) => SizedBox(
+        width: 36,
+        child: Center(
+          child: Text(
+            d,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade500,
+            ),
+          ),
+        ),
+      )).toList(),
+    );
+  }
+
+  Widget _buildCalendarGrid() {
+    // January 2022 starts on Saturday (weekday index 6)
+    final firstDay = DateTime(_currentMonth.year, _currentMonth.month, 1);
+    final lastDay = DateTime(_currentMonth.year, _currentMonth.month + 1, 0);
+
+    // 0=Sun,1=Mon,...6=Sat
+    int startOffset = firstDay.weekday % 7;
+
+    List<Widget> cells = [];
+
+    // Previous month trailing days
+    final prevMonthLastDay = DateTime(_currentMonth.year, _currentMonth.month, 0).day;
+    for (int i = startOffset - 1; i >= 0; i--) {
+      cells.add(_buildDayCell(prevMonthLastDay - i, isOtherMonth: true));
+    }
+
+    // Current month days
+    for (int day = 1; day <= lastDay.day; day++) {
+      cells.add(_buildDayCell(day, isOtherMonth: false));
+    }
+
+    // Next month leading days
+    int remaining = 7 - (cells.length % 7);
+    if (remaining < 7) {
+      for (int i = 1; i <= remaining; i++) {
+        cells.add(_buildDayCell(i, isOtherMonth: true));
+      }
+    }
+
+    List<Widget> rows = [];
+    for (int i = 0; i < cells.length; i += 7) {
+      rows.add(Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: cells.sublist(i, i + 7 < cells.length ? i + 7 : cells.length),
+      ));
+      rows.add(const SizedBox(height: 4));
+    }
+
+    return Column(children: rows);
+  }
+
+  Widget _buildDayCell(int day, {required bool isOtherMonth}) {
+    if (isOtherMonth) {
+      return SizedBox(
+        width: 36,
+        height: 36,
+        child: Center(
+          child: Text(
+            '$day',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade400,
+            ),
+          ),
+        ),
+      );
+    }
+
+    final bool isSelected = _selectedDates.contains(day);
+    final bool isRange = _rangeDates.contains(day);
+    final bool isStartOfRange = day == 19;
+    final bool isEndOfRange = day == 22;
+    final bool inRange = _rangeHighlight.contains(day);
+
+    Color? bgColor;
+    Color textColor = Colors.black87;
+    bool hasBorder = false;
+    bool hasRangeBackground = false;
+
+    if (isSelected && !isRange) {
+      bgColor = const Color(0xFFE53935);
+      textColor = Colors.white;
+    } else if (isRange) {
+      bgColor = Colors.transparent;
+      textColor = Colors.black87;
+      hasRangeBackground = true;
+    }
+
+    if (day == 22) {
+      hasBorder = true;
+      bgColor = Colors.transparent;
+      textColor = const Color(0xFFE53935);
+    }
+
+    Widget cell = GestureDetector(
+      onTap: () {
+        setState(() {
+          if (_selectedDates.contains(day)) {
+            _selectedDates.remove(day);
+          } else {
+            _selectedDates.add(day);
+          }
+        });
+      },
+      child: SizedBox(
+        width: 36,
+        height: 36,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Range highlight background
+            if (inRange && !isStartOfRange)
+              Positioned(
+                left: isEndOfRange ? 0 : -6,
+                right: isStartOfRange ? 0 : -6,
+                child: Container(
+                  height: 36,
+                  color: Colors.grey.shade200,
+                ),
+              ),
+            // Circle background
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: bgColor,
+                border: hasBorder
+                    ? Border.all(color: const Color(0xFFE53935), width: 1.5)
+                    : null,
+              ),
+              child: Center(
+                child: Text(
+                  '$day',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: isSelected || hasBorder ? FontWeight.w600 : FontWeight.w400,
+                    color: textColor,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    return cell;
+  }
