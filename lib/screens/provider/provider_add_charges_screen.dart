@@ -54,6 +54,13 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
     }
   }
 
+  @override
+  void dispose() {
+    _priceController.dispose();
+    _customServiceController.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
