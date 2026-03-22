@@ -261,6 +261,27 @@ class _UserEditProfileScreenState extends State<UserEditProfileScreen> {
 
               const SizedBox(height: 32),
 
+              // First Name
+              TextFormField(
+                controller: _firstNameController,
+                style: const TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
+                decoration: InputDecoration(
+                  labelText: 'First Name',
+                  labelStyle: const TextStyle(color: Colors.black54),
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  prefixIcon: Icon(Icons.person, color: accentDarkBlue),
+                  filled: true,
+                  fillColor: const Color(0xFFF5F5F5),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                validator: (v) => v?.trim().isEmpty ?? true ? 'Required' : null,
+              ),
+
+              const SizedBox(height: 20),
+
             ]
           ),
         ),
