@@ -12,7 +12,8 @@ class ProviderDashboard extends StatefulWidget {
 }
 
 class _ProviderDashboardState extends State<ProviderDashboard> {
-  int _selectedIndex = 0; // 0 = home selected by default
+  int _selectedIndex = 0; // home selected by default
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +25,7 @@ class _ProviderDashboardState extends State<ProviderDashboard> {
             padding:
                 const EdgeInsets.only(top: 60, left: 20, right: 20, bottom: 20),
             decoration: const BoxDecoration(
-              color: Color(0xFF1B1B4B), // dark navy blue
+              color: Color(0xFF1B1B4B),
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20),
                 bottomRight: Radius.circular(20),
@@ -32,18 +33,18 @@ class _ProviderDashboardState extends State<ProviderDashboard> {
             ),
             child: const Row(
               children: [
-                const Icon(Icons.location_on, color: Colors.white, size: 20),
-                const SizedBox(width: 8),
-                const Text(
+                Icon(Icons.location_on, color: Colors.white, size: 20),
+                SizedBox(width: 8),
+                Text(
                   "New Town, Ratnapura",
                   style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
-                const Icon(Icons.keyboard_arrow_down, color: Colors.white),
+                Icon(Icons.keyboard_arrow_down, color: Colors.white),
               ],
             ),
           ),
 
-          // Temporary placeholder for the rest (menu cards will come next)
+          // Menu cards
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -76,7 +77,35 @@ class _ProviderDashboardState extends State<ProviderDashboard> {
         unselectedItemColor: Colors.grey,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        currentIndex: _selectedIndex, // ← this uses the state variable
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          // + button (index 1) → opens AddServiceTypeScreen
+          if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AddServiceTypeScreen(),
+              ),
+            );
+            return;
+          }
+
+          // Profile avatar (index 3) → opens ProfileScreen
+          if (index == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProfileScreen(),
+              ),
+            );
+            return;
+          }
+
+          // Other icons (home, chat) → just highlight
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_filled),
@@ -93,8 +122,7 @@ class _ProviderDashboardState extends State<ProviderDashboard> {
           BottomNavigationBarItem(
             icon: CircleAvatar(
               radius: 12,
-              backgroundImage: NetworkImage(
-                  'https://via.placeholder.com/150'), // temp avatar
+              backgroundImage: NetworkImage('https://via.placeholder.com/150'),
             ),
             label: '',
           ),
@@ -118,31 +146,31 @@ class _ProviderDashboardState extends State<ProviderDashboard> {
       ),
     );
   }
-}
 
-Widget _buildMenuCard(String title, String imagePath) {
-  return Container(
-    height: 150,
-    width: double.infinity,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(25),
-      color: Colors.grey[300],
-      image: DecorationImage(
-        image: AssetImage(imagePath),
-        fit: BoxFit.cover,
-        colorFilter:
-            ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.darken),
+  Widget _buildMenuCard(String title, String imagePath) {
+    return Container(
+      height: 150,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25),
+        color: Colors.grey[300],
+        image: DecorationImage(
+          image: AssetImage(imagePath),
+          fit: BoxFit.cover,
+          colorFilter:
+              ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.darken),
+        ),
       ),
-    ),
-    padding: const EdgeInsets.all(25),
-    alignment: Alignment.centerLeft,
-    child: Text(
-      title,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
+      padding: const EdgeInsets.all(25),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

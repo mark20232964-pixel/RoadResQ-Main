@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class AddGarageScreen extends StatefulWidget {
-  const AddGarageScreen({super.key});
+class ProviderAddNewGarageScreen extends StatefulWidget {
+  // ← Renamed class
+  const ProviderAddNewGarageScreen({super.key});
 
   @override
-  State<AddGarageScreen> createState() => _AddGarageScreenState();
+  State<ProviderAddNewGarageScreen> createState() =>
+      _ProviderAddNewGarageScreenState();
 }
 
 class _AddGarageScreenState extends State<AddGarageScreen> {
