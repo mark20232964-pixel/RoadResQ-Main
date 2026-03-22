@@ -93,4 +93,13 @@ class _ProviderOngoingScreenState extends State<ProviderOngoingScreen> {
 
     return meters / 1000;
   }
+
+  bool isExpired(Timestamp? timestamp) {
+    if (timestamp == null) return false;
+
+    final requestTime = timestamp.toDate();
+    final now = DateTime.now();
+
+    return now.difference(requestTime).inMinutes > timeoutMinutes;
+  }
 }
