@@ -180,7 +180,39 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
       ],
     );
   }
+// Only showing what changed inside _buildCalendarCard():
 
+  Widget _buildCalendarCard() {
+    return Container(
+      // ...same decoration...
+      child: Column(
+        children: [
+          _buildMonthHeader(),
+          const SizedBox(height: 10),
+          _buildDayLabels(),   // ← added
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDayLabels() {
+    const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: days
+          .map((d) => SizedBox(
+        width: 34,
+        child: Center(
+          child: Text(d,
+              style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey.shade400)),
+        ),
+      ))
+          .toList(),
+    );
+  }
   Widget _buildSectionLabel(String label) {
     return Text(label,
         style: const TextStyle(
