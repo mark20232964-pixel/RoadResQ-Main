@@ -1,5 +1,3 @@
-// lib/screens/user/mechanic_details.dart
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -25,8 +23,7 @@ class _MechanicDetailsScreenState extends State<MechanicDetailsScreen> {
   List<LatLng> polylineCoordinates = [];
   GoogleMapController? _mapController;
 
-  final String apiKey =
-      "YOUR_ACTUAL_GOOGLE_API_KEY_HERE"; // ← Replace with your real key
+  final String apiKey = "YOUR_API_KEY_HERE";
 
   @override
   void initState() {
@@ -34,29 +31,31 @@ class _MechanicDetailsScreenState extends State<MechanicDetailsScreen> {
     _loadEverything();
   }
 
-  // Load location & route without blocking UI
+  // 🚀 LOAD WITHOUT BLOCKING UI
   Future<void> _loadEverything() async {
-    try {
-      Position pos = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-      userLocation = LatLng(pos.latitude, pos.longitude);
-    } catch (e) {
-      // Fallback to mechanic location if user location fails
-    }
+    // STEP 1: Get location FIRST
+    Position pos = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
 
+    userLocation = LatLng(pos.latitude, pos.longitude);
+
+    setState(() {}); // 🔥 SHOW MAP IMMEDIATELY
+
+    // STEP 2: Load route AFTER UI shows
     await _getRoute();
-    setState(() {});
+
+    setState(() {}); // 🔥 UPDATE ROUTE
   }
 
-  // Get driving route polyline
+  // 🛣️ ROUTE
   Future<void> _getRoute() async {
-    if (userLocation == null) return;
-
     PolylinePoints polylinePoints = PolylinePoints();
 
     PolylineRequest request = PolylineRequest(
-      origin: PointLatLng(userLocation!.latitude, userLocation!.longitude),
+      origin: PointLatLng(
+        userLocation!.latitude,
+        userLocation!.longitude,
+      ),
       destination: PointLatLng(
         widget.mechanicLocation.latitude,
         widget.mechanicLocation.longitude,
@@ -72,11 +71,13 @@ class _MechanicDetailsScreenState extends State<MechanicDetailsScreen> {
     if (result.points.isNotEmpty) {
       polylineCoordinates =
           result.points.map((e) => LatLng(e.latitude, e.longitude)).toList();
+
+      // 🔥 MOVE CAMERA TO FIT ROUTE
       _fitMapToRoute();
     }
   }
 
-  // Auto zoom to show both user and mechanic
+  // 🔥 AUTO ZOOM TO SHOW BOTH USER + MECHANIC
   void _fitMapToRoute() {
     if (_mapController == null || userLocation == null) return;
 
@@ -104,7 +105,7 @@ class _MechanicDetailsScreenState extends State<MechanicDetailsScreen> {
     );
   }
 
-  // Open Google Maps app for navigation
+  // 🚗 OPEN GOOGLE MAPS
   Future<void> _openGoogleMaps() async {
     final url =
         "https://www.google.com/maps/dir/?api=1&destination=${widget.mechanicLocation.latitude},${widget.mechanicLocation.longitude}&travelmode=driving";
@@ -112,24 +113,17 @@ class _MechanicDetailsScreenState extends State<MechanicDetailsScreen> {
     final uri = Uri.parse(url);
 
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not open Google Maps')),
-      );
+      await launchUrl(uri);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.name),
-        backgroundColor: const Color(0xFF120A4D),
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: Text(widget.name)),
       body: Stack(
         children: [
+          // 🔥 MAP ALWAYS SHOWS (NO WAIT)
           GoogleMap(
             initialCameraPosition: CameraPosition(
               target: userLocation ?? widget.mechanicLocation,
@@ -141,14 +135,10 @@ class _MechanicDetailsScreenState extends State<MechanicDetailsScreen> {
                 Marker(
                   markerId: const MarkerId("user"),
                   position: userLocation!,
-                  icon: BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueBlue),
                 ),
               Marker(
                 markerId: const MarkerId("mechanic"),
                 position: widget.mechanicLocation,
-                icon: BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueRed),
               ),
             },
             polylines: {
@@ -163,11 +153,11 @@ class _MechanicDetailsScreenState extends State<MechanicDetailsScreen> {
             myLocationButtonEnabled: true,
           ),
 
-          // Loading overlay
+          // 🔥 LOADING (only small overlay now)
           if (userLocation == null)
             const Center(child: CircularProgressIndicator()),
 
-          // Bottom buttons
+          // 🔘 BUTTONS
           Positioned(
             bottom: 20,
             left: 20,
@@ -176,21 +166,11 @@ class _MechanicDetailsScreenState extends State<MechanicDetailsScreen> {
               children: [
                 ElevatedButton(
                   onPressed: _openGoogleMaps,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF120A4D),
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
                   child: const Text("🚗 Start Navigation"),
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[300],
-                    foregroundColor: Colors.black87,
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
                   child: const Text("Back"),
                 ),
               ],
