@@ -20,10 +20,31 @@ class _AddServiceTypeScreenState extends State<AddServiceTypeScreen> {
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      body: const Center(
-        child: Text(
-          'Coming soon - service type selection',
-          style: TextStyle(fontSize: 20, color: Colors.black54),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'What type of service do you provide?',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Choose one to create your provider profile',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 32),
+            // Cards will come in next commits
+            const Spacer(), // pushes content to top for now
+          ],
         ),
       ),
     );
