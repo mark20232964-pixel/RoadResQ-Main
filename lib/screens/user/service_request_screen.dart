@@ -204,4 +204,30 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen>
       }
     });
   }
+
+  // 🔧 FETCH PROVIDER
+  Future<void> fetchProviderDetails(String providerId) async {
+    final doc = await FirebaseFirestore.instance
+        .collection('providers')
+        .doc(providerId)
+        .get();
+
+    final data = doc.data();
+    if (data == null) return;
+
+    GeoPoint loc = data['location'];
+
+    _providerLocation = LatLng(loc.latitude, loc.longitude);
+    _providerName = data['name'];
+
+    _markers.add(
+      Marker(
+        markerId: const MarkerId('provider'),
+        position: _providerLocation!,
+      ),
+    );
+
+    await _drawRoute();
+    calculateETA();
+  }
 }
