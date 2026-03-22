@@ -44,78 +44,83 @@ class _AddServiceTypeScreenState extends State<AddServiceTypeScreen> {
             ),
             const SizedBox(height: 32),
 
-            // Mechanic card (already there from commit 5)
-            Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
-              elevation: 4,
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: const Color(0xFF6A48FF).withOpacity(0.2),
-                  child: const Icon(Icons.build, color: Color(0xFF6A48FF)),
-                ),
-                title: const Text('Mechanic'),
-                subtitle: const Text('Freelance or mobile mechanic'),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AddMechanicScreen(),
-                    ),
-                  );
-                },
-              ),
+            // Mechanic card - using new helper
+            _buildServiceTile(
+              icon: Icons.build,
+              title: 'Mechanic',
+              subtitle: 'Freelance or mobile mechanic',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddMechanicScreen(),
+                  ),
+                );
+              },
             ),
 
             const SizedBox(height: 16),
 
-            // Garage card - NEW in this commit
-            Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
-              elevation: 4,
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: const Color(0xFF6A48FF).withOpacity(0.2),
-                  child: const Icon(Icons.garage, color: Color(0xFF6A48FF)),
-                ),
-                title: const Text('Garage / Workshop'),
-                subtitle: const Text('Coming soon'),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Garage / Workshop - Coming soon')),
-                  );
-                },
-              ),
-            ),
-            Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
-              elevation: 4,
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: const Color(0xFF6A48FF).withOpacity(0.2),
-                  child: const Icon(Icons.local_taxi, color: Color(0xFF6A48FF)),
-                ),
-                title: const Text('Tow Truck'),
-                subtitle: const Text('Coming soon'),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Tow Truck - Coming soon')),
-                  );
-                },
-              ),
+            // Garage card - using new helper
+            _buildServiceTile(
+              icon: Icons.garage,
+              title: 'Garage / Workshop',
+              subtitle: 'Coming soon',
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Garage / Workshop - Coming soon')),
+                );
+              },
             ),
 
             const SizedBox(height: 16),
 
-            const Spacer(), // still temporary
+            // Tow Truck card - using new helper
+            _buildServiceTile(
+              icon: Icons.local_taxi,
+              title: 'Tow Truck',
+              subtitle: 'Coming soon',
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Tow Truck - Coming soon')),
+                );
+              },
+            ),
+
+            const SizedBox(height: 32),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildServiceTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 4,
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: const Color(0xFF6A48FF).withOpacity(0.2),
+          radius: 28,
+          child: Icon(icon, color: const Color(0xFF6A48FF), size: 28),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: const TextStyle(color: Colors.grey, fontSize: 14),
+        ),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 20),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        onTap: onTap,
       ),
     );
   }
