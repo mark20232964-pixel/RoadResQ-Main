@@ -102,4 +102,14 @@ class _ProviderOngoingScreenState extends State<ProviderOngoingScreen> {
 
     return now.difference(requestTime).inMinutes > timeoutMinutes;
   }
+
+  Future<void> deleteIfExpired(DocumentSnapshot doc) async {
+    final data = doc.data() as Map<String, dynamic>;
+    if (isExpired(data['timestamp'])) {
+      await FirebaseFirestore.instance
+          .collection('requests')
+          .doc(doc.id)
+          .delete();
+    }
+  }
 }
