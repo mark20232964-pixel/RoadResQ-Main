@@ -16,6 +16,15 @@ class ProviderOngoingScreen extends StatefulWidget {
 }
 
 class _ProviderOngoingScreenState extends State<ProviderOngoingScreen> {
+  final String providerId =
+      FirebaseAuth.instance.currentUser?.uid ?? "provider";
+
+  Position? _providerLocation;
+
+  final int timeoutMinutes = 30;
+
+  StreamSubscription<Position>? _positionStream;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
