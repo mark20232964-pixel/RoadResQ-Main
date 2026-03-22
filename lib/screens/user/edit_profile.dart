@@ -125,4 +125,71 @@ class _UserEditProfileScreenState extends State<UserEditProfileScreen> {
       });
     }
   }
+
+  // update user profile in firestore
+  Future<void> _updateProfile() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please log in first')),
+      );
+      return;
+    }
+
+    setState(() => _isUpdating = true);
+
+    try {
+      String? newProfileImageUrl = _profileImageUrl;
+
+      if (_profileImage != null) {
+        final fileName = 'profile_${user.uid}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final ref = FirebaseStorage.instance.ref().child('profile_images/$fileName');
+        await ref.putFile(_profileImage!);
+        newProfileImageUrl = await ref.getDownloadURL();
+
+        print("New profile picture uploaded successfully. URL: $newProfileImageUrl");
+      } else {
+        print("No new image selected → keeping existing URL: $newProfileImageUrl");
+      }
+
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        'firstName': _firstNameController.text.trim(),
+        'lastName': _lastNameController.text.trim(),
+        'phone': _phoneController.text.trim().replaceAll(RegExp(r'[^0-9]'), ''),
+        'dob': _selectedDob != null ? Timestamp.fromDate(_selectedDob!) : null,
+        'gender': _selectedGender,
+        if (newProfileImageUrl != null) 'profileImageUrl': newProfileImageUrl,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      final fullName = '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}'.trim();
+      if (fullName.isNotEmpty && fullName != user.displayName) {
+        await user.updateDisplayName(fullName);
+        await user.reload();
+      }
+
+      if (mounted) {
+        setState(() {
+          _profileImage = null;
+          _profileImageUrl = newProfileImageUrl;
+        });
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile updated successfully!')),
+      );
+
+      Navigator.pop(context);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update profile: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isUpdating = false);
+    }
+  }
 }
