@@ -269,4 +269,22 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen>
       }
     });
   }
+
+  // ❌ CANCEL
+  Future<void> cancelRequest() async {
+    if (_currentRequestId == null) return;
+
+    await FirebaseFirestore.instance
+        .collection('requests')
+        .doc(_currentRequestId)
+        .update({'status': 'cancelled'});
+
+    _requestListener?.cancel();
+    _timeoutTimer?.cancel();
+
+    setState(() {
+      _isSearching = false;
+      _requestAccepted = false;
+    });
+  }
 }
