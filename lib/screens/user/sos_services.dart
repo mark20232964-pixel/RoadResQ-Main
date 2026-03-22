@@ -335,4 +335,71 @@ class _SosScreenState extends State<SosScreen> {
       ),
     );
   }
+
+  Widget _buildServicesList() {
+    if (_errorMessage != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text(
+            _errorMessage!,
+            style: const TextStyle(color: Colors.redAccent, fontSize: 18),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        const Text(
+          'Nearby Emergency Services (Live)',
+          style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        if (_currentPosition != null)
+          Text(
+            'Live location: ${_currentPosition!.latitude.toStringAsFixed(5)}, ${_currentPosition!.longitude.toStringAsFixed(5)}',
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
+          ),
+        const SizedBox(height: 24),
+        ..._nearbyServices.map((service) => Card(
+              color: const Color(0xFF1B1B4B),
+              margin: const EdgeInsets.only(bottom: 16),
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(16),
+                leading: Icon(
+                  service['type'] == 'Police' ? Icons.local_police :
+                  service['type'] == 'Hospital' ? Icons.local_hospital :
+                  Icons.fire_truck,
+                  color: const Color(0xFF6A48FF),
+                  size: 40,
+                ),
+                title: Text(service['name'], style: const TextStyle(color: Colors.white, fontSize: 17)),
+                subtitle: Text('${service['distance']} • ${service['type']}', style: const TextStyle(color: Colors.white70)),
+                trailing: service['phone'] != null
+                    ? ElevatedButton(
+                        onPressed: () => _callNumber(service['phone']),
+                        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF6A48FF)),
+                        child: const Text('Call Now'),
+                      )
+                    : const Text('No phone', style: TextStyle(color: Colors.grey)),
+              ),
+            )),
+        const SizedBox(height: 30),
+        const Text(
+          'Services updated based on your live location.',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white70),
+        ),
+      ],
+    );
+  }
+}
+
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1)}";
+  }
 }
