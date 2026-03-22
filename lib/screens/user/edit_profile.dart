@@ -358,6 +358,33 @@ class _UserEditProfileScreenState extends State<UserEditProfileScreen> {
 
               const SizedBox(height: 20),
 
+              // Gender
+              DropdownButtonFormField<String>(
+                value: _selectedGender,
+                style: const TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
+                decoration: InputDecoration(
+                  labelText: 'Gender (Optional)',
+                  labelStyle: const TextStyle(color: Colors.black54),
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  prefixIcon: Icon(Icons.wc, color: accentDarkBlue),
+                  filled: true,
+                  fillColor: const Color(0xFFF5F5F5),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                items: const [
+                  DropdownMenuItem(value: 'Male', child: Text('Male')),
+                  DropdownMenuItem(value: 'Female', child: Text('Female')),
+                  DropdownMenuItem(value: 'Other', child: Text('Other')),
+                  DropdownMenuItem(value: null, child: Text('Prefer not to say')),
+                ],
+                onChanged: (v) => setState(() => _selectedGender = v),
+              ),
+
+              const SizedBox(height: 48),
+
 
             ]
           ),
