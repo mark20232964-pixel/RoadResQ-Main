@@ -1,6 +1,10 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:roadresq/models/schedule.dart';
+import 'package:roadresq/repositories/schedule_repository.dart';
+import 'package:roadresq/screens/services/service.dart';
 
 class ScheduleMechanicScreen extends StatefulWidget {
   final Map<String, dynamic> schedule;
@@ -14,7 +18,68 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
   static const _primary = Color(0xFF1B1B4B);
   static const _accent = Color(0xFFE53935);
 
+  int? _selectedDate;
   DateTime _currentMonth = DateTime.now();
+  int _startHour = 10;
+  int _startMinute = 0;
+  bool _startIsAm = true;
+  bool _isLoading = false;
+
+  final _repository = ScheduleRepository();
+
+  Future<void> _scheduleNow() async {
+    setState(() => _isLoading = true);
+    print(widget.schedule['location']);
+    final schedule = ScheduleModel(
+      userId: AuthService().currentUser!.uid,
+      providerId: widget.schedule['providerId'] as String,
+      issue: '',
+      location: widget.schedule['userLocation'],
+      providerLocation: widget.schedule['location'] as GeoPoint,
+      scheduledTime: DateTime(
+        _currentMonth.year,
+        _currentMonth.month,
+        _selectedDate!,
+        _startIsAm ? _startHour % 12 : (_startHour % 12) + 12,
+        _startMinute,
+      ),
+    );
+    try {
+      await _repository.createSchedule(schedule);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white),
+                SizedBox(width: 10),
+                Text(
+                  'Schedule booked successfully!',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.green.shade600,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        await Future.delayed(const Duration(seconds: 2));
+        if (mounted) Navigator.of(context).pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,16 +103,23 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
                     _buildSectionLabel('Pick a Date'),
                     const SizedBox(height: 10),
                     _buildCalendarCard(),
+                    const SizedBox(height: 20),
+                    _buildSectionLabel('Preferred Time'),
+                    const SizedBox(height: 10),
+                    _buildTimePickerCard(),
                     const SizedBox(height: 24),
                   ],
                 ),
               ),
             ),
+            _buildScheduleButton(),
           ],
         ),
       ),
     );
   }
+
+  // ── Header ──────────────────────────────────────────────────────────────────
 
   Widget _buildHeader(String name) {
     return Container(
@@ -75,6 +147,8 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
       ),
     );
   }
+
+  // ── Mechanic Profile ────────────────────────────────────────────────────────
 
   Widget _buildMechanicProfile(String name) {
     final experience = widget.schedule['experience'] as String? ?? '';
@@ -122,8 +196,8 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
                 if (experience.isNotEmpty) ...[
                   const SizedBox(height: 4),
                   Text(experience,
-                      style: TextStyle(
-                          fontSize: 12, color: Colors.grey.shade500)),
+                      style:
+                      TextStyle(fontSize: 12, color: Colors.grey.shade500)),
                 ],
               ],
             ),
@@ -132,6 +206,8 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
       ),
     );
   }
+
+  // ── Calendar ────────────────────────────────────────────────────────────────
 
   Widget _buildCalendarCard() {
     return Container(
@@ -149,6 +225,10 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
       child: Column(
         children: [
           _buildMonthHeader(),
+          const SizedBox(height: 10),
+          _buildDayLabels(),
+          const SizedBox(height: 6),
+          _buildCalendarGrid(),
         ],
       ),
     );
@@ -156,8 +236,19 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
 
   Widget _buildMonthHeader() {
     const monthNames = [
-      '', 'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December',
+      '',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -180,20 +271,6 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
       ],
     );
   }
-// Only showing what changed inside _buildCalendarCard():
-
-  Widget _buildCalendarCard() {
-    return Container(
-      // ...same decoration...
-      child: Column(
-        children: [
-          _buildMonthHeader(),
-          const SizedBox(height: 10),
-          _buildDayLabels(),   // ← added
-        ],
-      ),
-    );
-  }
 
   Widget _buildDayLabels() {
     const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
@@ -211,6 +288,147 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
         ),
       ))
           .toList(),
+    );
+  }
+
+  Widget _buildCalendarGrid() {
+    final firstDay = DateTime(_currentMonth.year, _currentMonth.month, 1);
+    final lastDay = DateTime(_currentMonth.year, _currentMonth.month + 1, 0);
+    final startOffset = firstDay.weekday % 7;
+    final prevLast = DateTime(_currentMonth.year, _currentMonth.month, 0).day;
+
+    final cells = <Widget>[
+      for (int i = startOffset - 1; i >= 0; i--)
+        _buildDayCell(prevLast - i, isOtherMonth: true),
+      for (int d = 1; d <= lastDay.day; d++)
+        _buildDayCell(d, isOtherMonth: false),
+    ];
+
+    final rem = 7 - (cells.length % 7);
+    if (rem < 7) {
+      for (int i = 1; i <= rem; i++) {
+        cells.add(_buildDayCell(i, isOtherMonth: true));
+      }
+    }
+
+    return Column(
+      children: [
+        for (int i = 0; i < cells.length; i += 7) ...[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: cells.sublist(i, (i + 7).clamp(0, cells.length)),
+          ),
+          const SizedBox(height: 2),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildDayCell(int day, {required bool isOtherMonth}) {
+    if (isOtherMonth) {
+      return SizedBox(
+        width: 34,
+        height: 34,
+        child: Center(
+          child: Text('$day',
+              style: TextStyle(fontSize: 13, color: Colors.grey.shade300)),
+        ),
+      );
+    }
+
+    final isSelected = _selectedDate == day;
+    final now = DateTime.now();
+    final isToday = day == now.day &&
+        _currentMonth.month == now.month &&
+        _currentMonth.year == now.year;
+
+    return GestureDetector(
+      onTap: () => setState(() => _selectedDate = isSelected ? null : day),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        width: 34,
+        height: 34,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: isSelected ? _primary : Colors.transparent,
+          border: isToday && !isSelected
+              ? Border.all(color: _accent, width: 1.5)
+              : null,
+        ),
+        child: Center(
+          child: Text(
+            '$day',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight:
+              isSelected || isToday ? FontWeight.w700 : FontWeight.w400,
+              color: isSelected
+                  ? Colors.white
+                  : isToday
+                  ? _accent
+                  : Colors.black87,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── Time Picker ─────────────────────────────────────────────────────────────
+
+  Widget _buildTimePickerCard() {
+    return GestureDetector(
+      onTap: _showTimePicker,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 3)),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: _primary.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.access_time, color: _primary, size: 20),
+            ),
+            const SizedBox(width: 14),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Appointment Time',
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade500,
+                        fontWeight: FontWeight.w500)),
+                const SizedBox(height: 2),
+                Text(
+                  '${_startHour.toString().padLeft(2, '0')} : '
+                      '${_startMinute.toString().padLeft(2, '0')}  '
+                      '${_startIsAm ? 'AM' : 'PM'}',
+                  style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: _primary,
+                      letterSpacing: 0.5),
+                ),
+              ],
+            ),
+            const Spacer(),
+            Icon(Icons.chevron_right, color: Colors.grey.shade400),
+          ],
+        ),
+      ),
     );
   }
 
@@ -348,11 +566,8 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
       ],
     );
   }
-  // Add _isLoading state:
-  bool _isLoading = false;
 
-// Add to build() Column as last child (outside Expanded):
-  _buildScheduleButton(),
+  // ── Schedule Button ─────────────────────────────────────────────────────────
 
   Widget _buildScheduleButton() {
     return Container(
@@ -377,16 +592,27 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           padding: const EdgeInsets.symmetric(vertical: 16),
         ),
-        child: Text(
-          _selectedDate == null ? 'Pick a Date to Continue' : 'Schedule Now',
+        child: _isLoading
+            ? const SizedBox(
+          height: 22,
+          width: 22,
+          child: CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 2.5,
+          ),
+        )
+            : Text(
+          _selectedDate == null
+              ? 'Pick a Date to Continue'
+              : 'Schedule Now',
           style: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.3),
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.3),
         ),
       ),
     );
   }
-
-  void _scheduleNow() {} // stub — wired in next commit
 
   Widget _buildSectionLabel(String label) {
     return Text(label,
