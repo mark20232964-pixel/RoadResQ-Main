@@ -79,6 +79,39 @@ class _UserEditProfileScreenState extends State<UserEditProfileScreen> {
     }
   }
 
+  void _showImagePickerOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library, color: Colors.white),
+              title: const Text('Select from Gallery'),
+              tileColor: accentDarkBlue,
+              textColor: Colors.white,
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt, color: Colors.white),
+              title: const Text('Take Photo'),
+              tileColor: accentDarkBlue,
+              textColor: Colors.white,
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   // add profile image picker
   Future<void> _pickImage(ImageSource source) async {
     try {
@@ -420,4 +453,13 @@ class _UserEditProfileScreenState extends State<UserEditProfileScreen> {
       ),
     );
   }  
+
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _phoneController.dispose();
+    _dobController.dispose();
+    super.dispose();
+  }
 }
