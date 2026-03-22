@@ -36,4 +36,11 @@ class _ProviderOngoingScreenState extends State<ProviderOngoingScreen> {
       ),
     );
   }
+
+  Future<void> getProviderLocation() async {
+    _providerLocation = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    setState(() {});
+  }
 }
