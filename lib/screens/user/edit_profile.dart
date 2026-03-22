@@ -303,6 +303,34 @@ class _UserEditProfileScreenState extends State<UserEditProfileScreen> {
 
               const SizedBox(height: 20),
 
+              // Phone
+              TextFormField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                style: const TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
+                decoration: InputDecoration(
+                  labelText: 'Mobile Number',
+                  labelStyle: const TextStyle(color: Colors.black54),
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  prefixIcon: Icon(Icons.phone, color: accentDarkBlue),
+                  prefixText: '+94 ', 
+                  filled: true,
+                  fillColor: const Color(0xFFF5F5F5),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) return 'Required';
+                  final cleaned = v.trim().replaceAll(RegExp(r'[^0-9]'), '');
+                  if (cleaned.length != 9) return 'Enter valid 9-digit number';
+                  return null;
+                },
+              ),
+
+              const SizedBox(height: 20),
+
 
             ]
           ),
