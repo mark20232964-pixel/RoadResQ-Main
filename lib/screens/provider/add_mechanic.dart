@@ -16,20 +16,39 @@ class AddMechanicScreen extends StatefulWidget {
 }
 
 class _AddMechanicScreenState extends State<AddMechanicScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Add Mechanic'),
-        backgroundColor: const Color(0xFF120A4D), // dark navy to match theme
+        backgroundColor: const Color(0xFF120A4D),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      body: const Center(
-        child: Text(
-          'Mechanic addition screen - form coming soon',
-          style: TextStyle(fontSize: 18, color: Colors.black54),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(labelText: 'Mechanic Name'),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _phoneController,
+                decoration: const InputDecoration(labelText: 'Phone Number'),
+                keyboardType: TextInputType.phone,
+              ),
+              const Spacer(),
+            ],
+          ),
         ),
       ),
     );
