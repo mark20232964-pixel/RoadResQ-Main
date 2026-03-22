@@ -213,6 +213,142 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
           .toList(),
     );
   }
+
+  void _showTimePicker() {
+    int h = _startHour, m = _startMinute;
+    bool am = _startIsAm;
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => StatefulBuilder(
+        builder: (_, setModal) => Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2)),
+              ),
+              const SizedBox(height: 16),
+              const Text('Select Time',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _spinnerColumn(
+                      value: h,
+                      min: 1,
+                      max: 12,
+                      onChanged: (v) => setModal(() => h = v)),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(':',
+                        style: TextStyle(
+                            fontSize: 32, fontWeight: FontWeight.bold)),
+                  ),
+                  _spinnerColumn(
+                      value: m,
+                      min: 0,
+                      max: 59,
+                      onChanged: (v) => setModal(() => m = v)),
+                  const SizedBox(width: 16),
+                  Column(
+                    children: [
+                      _amPmButton(
+                          label: 'AM',
+                          active: am,
+                          onTap: () => setModal(() => am = true)),
+                      const SizedBox(height: 8),
+                      _amPmButton(
+                          label: 'PM',
+                          active: !am,
+                          onTap: () => setModal(() => am = false)),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _startHour = h;
+                      _startMinute = m;
+                      _startIsAm = am;
+                    });
+                    Navigator.pop(ctx);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: const Text('Confirm',
+                      style:
+                      TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _amPmButton({
+    required String label,
+    required bool active,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: active ? _primary : Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(label,
+            style: TextStyle(
+                color: active ? Colors.white : Colors.black87,
+                fontWeight: FontWeight.w600)),
+      ),
+    );
+  }
+
+  Widget _spinnerColumn({
+    required int value,
+    required int min,
+    required int max,
+    required void Function(int) onChanged,
+  }) {
+    return Column(
+      children: [
+        IconButton(
+          icon: const Icon(Icons.keyboard_arrow_up),
+          onPressed: () => onChanged(value < max ? value + 1 : min),
+        ),
+        Text(value.toString().padLeft(2, '0'),
+            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w700)),
+        IconButton(
+          icon: const Icon(Icons.keyboard_arrow_down),
+          onPressed: () => onChanged(value > min ? value - 1 : max),
+        ),
+      ],
+    );
+  }
+
   Widget _buildSectionLabel(String label) {
     return Text(label,
         style: const TextStyle(
