@@ -91,6 +91,25 @@ class _AddServiceTypeScreenState extends State<AddServiceTypeScreen> {
                 },
               ),
             ),
+            Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
+              elevation: 4,
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: const Color(0xFF6A48FF).withOpacity(0.2),
+                  child: const Icon(Icons.local_taxi, color: Color(0xFF6A48FF)),
+                ),
+                title: const Text('Tow Truck'),
+                subtitle: const Text('Coming soon'),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Tow Truck - Coming soon')),
+                  );
+                },
+              ),
+            ),
 
             const SizedBox(height: 16),
 
