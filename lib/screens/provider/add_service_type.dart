@@ -12,6 +12,20 @@ class AddServiceTypeScreen extends StatefulWidget {
 class _AddServiceTypeScreenState extends State<AddServiceTypeScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder(); // temporary - we'll build UI step by step
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text('Add Your Service'),
+        backgroundColor: const Color(0xFF120A4D), // dark navy
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: const Center(
+        child: Text(
+          'Coming soon - service type selection',
+          style: TextStyle(fontSize: 20, color: Colors.black54),
+        ),
+      ),
+    );
   }
 }
