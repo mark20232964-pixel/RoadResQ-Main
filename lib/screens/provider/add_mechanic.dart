@@ -18,6 +18,20 @@ class AddMechanicScreen extends StatefulWidget {
 class _AddMechanicScreenState extends State<AddMechanicScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text('Add Mechanic'),
+        backgroundColor: const Color(0xFF120A4D), // dark navy to match theme
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: const Center(
+        child: Text(
+          'Mechanic addition screen - form coming soon',
+          style: TextStyle(fontSize: 18, color: Colors.black54),
+        ),
+      ),
+    );
   }
 }
