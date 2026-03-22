@@ -25,18 +25,6 @@ class _ProviderOngoingScreenState extends State<ProviderOngoingScreen> {
 
   StreamSubscription<Position>? _positionStream;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Ongoing Requests"),
-      ),
-      body: const Center(
-        child: Text("Ongoing Requests Screen"),
-      ),
-    );
-  }
-
   Future<void> getProviderLocation() async {
     _providerLocation = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
@@ -111,5 +99,36 @@ class _ProviderOngoingScreenState extends State<ProviderOngoingScreen> {
           .doc(doc.id)
           .delete();
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Ongoing Requests"),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('requests')
+            .where('providerId', isEqualTo: providerId)
+            .where('status', isEqualTo: 'accepted')
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final requests = snapshot.data!.docs;
+
+          if (requests.isEmpty) {
+            return const Center(child: Text("No ongoing requests"));
+          }
+
+          return const Center(
+            child: Text("Requests Loaded"),
+          );
+        },
+      ),
+    );
   }
 }
