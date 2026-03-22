@@ -88,4 +88,61 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen>
 
     setState(() {});
   }
+
+  // 🧠 ETA CALCULATION
+  void calculateETA() {
+    if (_userLocation == null || _providerLocation == null) return;
+
+    double meters = Geolocator.distanceBetween(
+      _providerLocation!.latitude,
+      _providerLocation!.longitude,
+      _userLocation!.latitude,
+      _userLocation!.longitude,
+    );
+
+    double km = meters / 1000;
+
+    double speed = 40; // km/h
+
+    double hours = km / speed;
+    int minutes = (hours * 60).round();
+
+    setState(() {
+      _eta = "$minutes min";
+    });
+  }
+
+  // 🗺 DRAW ROUTE
+  Future<void> _drawRoute() async {
+    if (_userLocation == null || _providerLocation == null) return;
+
+    final result = await polylinePoints.getRouteBetweenCoordinates(
+      googleApiKey: googleApiKey,
+      request: PolylineRequest(
+        origin: PointLatLng(_userLocation!.latitude, _userLocation!.longitude),
+        destination: PointLatLng(
+          _providerLocation!.latitude,
+          _providerLocation!.longitude,
+        ),
+        mode: TravelMode.driving,
+      ),
+    );
+
+    if (result.points.isNotEmpty) {
+      final points =
+          result.points.map((e) => LatLng(e.latitude, e.longitude)).toList();
+
+      _polylines.clear();
+      _polylines.add(
+        Polyline(
+          polylineId: const PolylineId("route"),
+          color: const Color(0xFFB388FF),
+          width: 6,
+          points: points,
+        ),
+      );
+
+      setState(() {});
+    }
+  }
 }
