@@ -130,6 +130,7 @@ class _ProviderOngoingScreenState extends State<ProviderOngoingScreen> {
             itemBuilder: (context, index) {
               final doc = requests[index];
               final data = doc.data() as Map<String, dynamic>;
+              startLiveTracking(doc.id);
 
               GeoPoint userLoc = data['location'];
               double distance = calculateDistance(userLoc);
