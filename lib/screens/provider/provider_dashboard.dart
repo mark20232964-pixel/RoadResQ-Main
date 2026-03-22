@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'our_services_screen.dart';
-import 'provider_add_new_garage_screen.dart';
+import 'provider_add_new_garage_screen.dart'; // ← Correct import (same folder)
 
 class ProviderDashboard extends StatefulWidget {
   const ProviderDashboard({super.key});
@@ -12,7 +12,8 @@ class ProviderDashboard extends StatefulWidget {
 }
 
 class _ProviderDashboardState extends State<ProviderDashboard> {
-  int _selectedIndex = 0; // 0 = home selected by default
+  int _selectedIndex = 0; // home selected by default
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,18 +33,18 @@ class _ProviderDashboardState extends State<ProviderDashboard> {
             ),
             child: const Row(
               children: [
-                const Icon(Icons.location_on, color: Colors.white, size: 20),
-                const SizedBox(width: 8),
-                const Text(
+                Icon(Icons.location_on, color: Colors.white, size: 20),
+                SizedBox(width: 8),
+                Text(
                   "New Town, Ratnapura",
                   style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
-                const Icon(Icons.keyboard_arrow_down, color: Colors.white),
+                Icon(Icons.keyboard_arrow_down, color: Colors.white),
               ],
             ),
           ),
 
-          // Temporary placeholder for the rest (menu cards will come next)
+          // Menu cards
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -76,7 +77,23 @@ class _ProviderDashboardState extends State<ProviderDashboard> {
         unselectedItemColor: Colors.grey,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        currentIndex: _selectedIndex, // ← this uses the state variable
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          if (index == 1) {
+            // "+" button → navigate to Add Garage screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    const ProviderAddNewGarageScreen(), // ← Correct class name
+              ),
+            );
+            return;
+          }
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_filled),
@@ -93,57 +110,39 @@ class _ProviderDashboardState extends State<ProviderDashboard> {
           BottomNavigationBarItem(
             icon: CircleAvatar(
               radius: 12,
-              backgroundImage: NetworkImage(
-                  'https://via.placeholder.com/150'), // temp avatar
+              backgroundImage: NetworkImage('https://via.placeholder.com/150'),
             ),
             label: '',
           ),
         ],
-        onTap: (index) {
-          if (index == 1) {
-            // navigate to Add Garage screen when "+" is tapped
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const AddGarageScreen(),
-              ),
-            );
-            return;
-          }
-          setState(() {
-            _selectedIndex =
-                index; // this makes the selected icon highlight in black
-            });
-          }
-        },
       ),
     );
   }
-}
 
-Widget _buildMenuCard(String title, String imagePath) {
-  return Container(
-    height: 150,
-    width: double.infinity,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(25),
-      color: Colors.grey[300],
-      image: DecorationImage(
-        image: AssetImage(imagePath),
-        fit: BoxFit.cover,
-        colorFilter:
-            ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.darken),
+  Widget _buildMenuCard(String title, String imagePath) {
+    return Container(
+      height: 150,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25),
+        color: Colors.grey[300],
+        image: DecorationImage(
+          image: AssetImage(imagePath),
+          fit: BoxFit.cover,
+          colorFilter:
+              ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.darken),
+        ),
       ),
-    ),
-    padding: const EdgeInsets.all(25),
-    alignment: Alignment.centerLeft,
-    child: Text(
-      title,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
+      padding: const EdgeInsets.all(25),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

@@ -1,16 +1,20 @@
+// lib/screens/provider/provider_add_new_garage_screen.dart
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class AddGarageScreen extends StatefulWidget {
-  const AddGarageScreen({super.key});
+class ProviderAddNewGarageScreen extends StatefulWidget {
+  // ← Renamed class
+  const ProviderAddNewGarageScreen({super.key});
 
   @override
-  State<AddGarageScreen> createState() => _AddGarageScreenState();
+  State<ProviderAddNewGarageScreen> createState() =>
+      _ProviderAddNewGarageScreenState();
 }
 
-class _AddGarageScreenState extends State<AddGarageScreen> {
-
+class _ProviderAddNewGarageScreenState
+    extends State<ProviderAddNewGarageScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController();
@@ -58,14 +62,12 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
 
     setState(() => _isLoading = true);
 
-    // Firebase call to add garage
     try {
       final user = FirebaseAuth.instance.currentUser;
 
       if (user == null) {
         throw Exception('User not logged in');
       }
-    
 
       await FirebaseFirestore.instance.collection('garages').add({
         'name': _nameController.text.trim(),
@@ -86,7 +88,8 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
         barrierDismissible: false,
         builder: (context) => AlertDialog(
           backgroundColor: const Color(0xFFE6F4E6),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -98,26 +101,37 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
               const SizedBox(height: 16),
               const Text(
                 'Success!',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87),
               ),
               const Text(
                 'Garage Added. Thank You!',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87),
               ),
               const SizedBox(height: 24),
-                SizedBox(
+              SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context); // dialog
-                    Navigator.pop(context); // screen
+                    Navigator.pop(context); // close dialog
+                    Navigator.pop(context); // close add screen
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black87,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: const Text('OK', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)),
+                  child: const Text('OK',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87)),
                 ),
               ),
             ],
@@ -130,9 +144,9 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
         SnackBar(content: Text('Failed to add garage: ${e.toString()}')),
       );
     } finally {
-        if (mounted) {
-          setState(() => _isLoading = false);
-        }
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -145,12 +159,11 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
         title: const Text('Add a Garage'),
         backgroundColor: const Color(0xFF1B1B4B),
         surfaceTintColor: Colors.transparent,
-        // foregroundColor: Colors.white,
         elevation: 0,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12), 
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           child: Form(
             key: _formKey,
@@ -158,31 +171,45 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Garage Name
-                const Text('Garage Name', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 18)),
+                const Text('Garage Name',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                        fontSize: 18)),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _nameController,
                   cursorColor: const Color(0xFF120A4D),
                   style: const TextStyle(color: Colors.black87, fontSize: 16),
-                  validator: (v) => v?.trim().isEmpty ?? true ? 'Required' : null,
+                  validator: (v) =>
+                      v?.trim().isEmpty ?? true ? 'Required' : null,
                   decoration: _inputDecoration('e.g. ABC Motors'),
                 ),
                 const SizedBox(height: 16),
 
                 // Address
-                const Text('Address', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 18)),
+                const Text('Address',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                        fontSize: 18)),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _addressController,
                   cursorColor: const Color(0xFF120A4D),
                   style: const TextStyle(color: Colors.black87, fontSize: 16),
-                  validator: (v) => v?.trim().isEmpty ?? true ? 'Required' : null,
+                  validator: (v) =>
+                      v?.trim().isEmpty ?? true ? 'Required' : null,
                   decoration: _inputDecoration('e.g. 123, Main St, Colombo'),
                 ),
                 const SizedBox(height: 16),
 
                 // Contact Number
-                const Text('Contact Number', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 18)),
+                const Text('Contact Number',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                        fontSize: 18)),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _contactController,
@@ -199,7 +226,11 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                 const SizedBox(height: 16),
 
                 // Email
-                const Text('Email Address', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 18)),
+                const Text('Email Address',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                        fontSize: 18)),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _emailController,
@@ -218,7 +249,11 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                 const SizedBox(height: 16),
 
                 // Description
-                const Text('Description', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 18)),
+                const Text('Description',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                        fontSize: 18)),
                 const SizedBox(height: 6),
                 TextFormField(
                   controller: _descriptionController,
@@ -226,12 +261,17 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                   style: const TextStyle(color: Colors.black87, fontSize: 16),
                   minLines: 2,
                   maxLines: 2,
-                  decoration: _inputDecoration('e.g. Full-service auto repair shop'),
+                  decoration:
+                      _inputDecoration('e.g. Full-service auto repair shop'),
                 ),
                 const SizedBox(height: 20),
 
                 // Service Categories
-                const Text('Service Categories', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black87)),
+                const Text('Service Categories',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.black87)),
                 const SizedBox(height: 8),
 
                 LayoutBuilder(
@@ -246,7 +286,11 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                       crossAxisSpacing: 8,
                       children: _serviceCategories.keys.map((service) {
                         return CheckboxListTile(
-                          title: Text(service, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black54)),
+                          title: Text(service,
+                              style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black54)),
                           value: _serviceCategories[service]!,
                           dense: true,
                           activeColor: const Color.fromARGB(255, 134, 142, 247),
@@ -284,11 +328,13 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                         ? const SizedBox(
                             width: 24,
                             height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: Colors.white),
                           )
                         : const Text(
                             'ADD GARAGE',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                   ),
                 ),
