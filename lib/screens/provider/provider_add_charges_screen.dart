@@ -1,6 +1,7 @@
-// lib/screens/provider/add_charges_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AddChargesScreen extends StatefulWidget {
   final String customerName;
@@ -24,6 +25,7 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
   final _formKey = GlobalKey<FormState>();
   String? _selectedService;
   final _priceController = TextEditingController();
+  final _customServiceController = TextEditingController(); // ← new controller for "Other"
   bool _isLoading = false;
 
   @override
@@ -39,13 +41,12 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
       'Jump Start',
       'Emergency Repair',
       'Other',
-      // Add more services here when you know them (e.g. 'Oil Change')
     };
 
     final trimmed = widget.serviceName.trim();
     _selectedService = validServices.contains(trimmed) ? trimmed : null;
 
-    // Optional: warn user if pre-fill failed
+    // Warn if pre-filled value didn't match
     if (_selectedService == null && trimmed.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -58,6 +59,7 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
   @override
   void dispose() {
     _priceController.dispose();
+    _customServiceController.dispose();
     super.dispose();
   }
 
@@ -74,47 +76,64 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
     }
 
     setState(() => _isLoading = true);
-    FocusScope.of(context).unfocus(); // hide keyboard
+    FocusScope.of(context).unfocus();
 
-    // TODO: Save to Firebase / backend here
-    await Future.delayed(const Duration(seconds: 1)); // fake delay
+    // Firebase Call
+    try{
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) throw Exception('User not logged in');
 
-    setState(() => _isLoading = false);
+      final serviceName = _selectedService == 'Other'
+          ? _customServiceController.text.trim()
+          : _selectedService;
 
-    if (!mounted) return;
+      if (serviceName == null || serviceName.isEmpty) {
+        throw Exception('Service name is required');
+      }
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFFE6F4E6),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircleAvatar(
-              radius: 40,
-              backgroundColor: Colors.green,
-              child: Icon(Icons.check, color: Colors.white, size: 50),
-            ),
-            const SizedBox(height: 16),
-            const Text('Success!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            Text(
-              'LKR $price added for ${widget.customerName}\nService: $_selectedService',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16, color: Colors.black54),
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
+      await FirebaseFirestore.instance.collection('charges').add({
+        'customerName': widget.customerName,
+        'mechanicName': widget.mechanicName,
+        'serviceName': serviceName,
+        'price': price,
+        'createdAt': FieldValue.serverTimestamp(),
+        'requestId': widget.requestId ?? '',
+        'addedBy': user.uid,
+      });
+
+      if (mounted) return;
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          backgroundColor: const Color(0xFFE6F4E6),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircleAvatar(
+                radius: 40,
+                backgroundColor: Colors.green,
+                child: Icon(Icons.check, color: Colors.white, size: 50),
+              ),
+              const SizedBox(height: 16),
+              const Text('Success!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              Text(
+                'LKR $price added for ${widget.customerName}\nService: $serviceName',
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 16, color: Colors.black54),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 child: const Text('OK', style: TextStyle(fontSize: 18)),
@@ -124,15 +143,28 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
         ),
       ),
     );
+    } catch (e) {
+      if (!mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to add charges: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isOtherSelected = _selectedService == 'Other';
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Add Charges'),
-        backgroundColor: const Color(0xFF1B1B4B),
+        backgroundColor: const Color(0xFF120A4D),
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
         titleTextStyle: const TextStyle(
@@ -149,28 +181,32 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header with overflow protection
+                // Header
                 Text(
                   widget.customerName,
-                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Mechanic: ${widget.mechanicName}',
-                  style: const TextStyle(fontSize: 16, color: Colors.grey),
+                  style: const TextStyle(fontSize: 16, color: Colors.black54),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
                 const SizedBox(height: 32),
 
-                const Text('Provided Service', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                // Provided Service
+                const Text(
+                  'Provided Service',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
+                ),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
                   value: _selectedService,
                   isExpanded: true,
-                  hint: const Text('Choose Service'),
+                  hint: const Text('Choose Service', style: TextStyle(color: Colors.black54)),
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: const Color(0xFFF5F5F5),
@@ -190,12 +226,54 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
                     DropdownMenuItem(value: 'Emergency Repair', child: Text('Emergency Repair')),
                     DropdownMenuItem(value: 'Other', child: Text('Other')),
                   ],
-                  onChanged: (value) => setState(() => _selectedService = value),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedService = value;
+                      // Optional: clear custom field when switching away from Other
+                      if (value != 'Other') _customServiceController.clear();
+                    });
+                  },
                   validator: (value) => value == null ? 'Please select a service' : null,
                 ),
+
+                // Custom service field – only visible when "Other" is selected
+                if (isOtherSelected) ...[
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Custom Service Name',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _customServiceController,
+                    style: const TextStyle(color: Colors.black87),
+                    decoration: InputDecoration(
+                      hintText: 'e.g. Oil Change, AC Repair',
+                      hintStyle: const TextStyle(color: Colors.black54),
+                      filled: true,
+                      fillColor: const Color(0xFFF5F5F5),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    ),
+                    validator: (value) {
+                      if (isOtherSelected && (value == null || value.trim().isEmpty)) {
+                        return 'Please enter the custom service name';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+
                 const SizedBox(height: 24),
 
-                const Text('Price (LKR)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                // Price
+                const Text(
+                  'Price (LKR)',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
+                ),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _priceController,
@@ -203,8 +281,10 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
                   ],
+                  style: const TextStyle(color: Colors.black87),
                   decoration: InputDecoration(
                     hintText: 'Insert Price',
+                    hintStyle: const TextStyle(color: Colors.black54),
                     filled: true,
                     fillColor: const Color(0xFFF5F5F5),
                     border: OutlineInputBorder(
@@ -222,13 +302,14 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
                 ),
                 const SizedBox(height: 48),
 
+                // Submit
                 SizedBox(
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _submitCharges,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6A48FF),
+                      backgroundColor: const Color(0xFF120A4D),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       elevation: _isLoading ? 0 : 2,
@@ -237,10 +318,7 @@ class _AddChargesScreenState extends State<AddChargesScreen> {
                         ? const SizedBox(
                             height: 24,
                             width: 24,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2.5,
-                            ),
+                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
                           )
                         : const Text(
                             'SUBMIT',
