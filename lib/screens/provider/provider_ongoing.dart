@@ -43,4 +43,10 @@ class _ProviderOngoingScreenState extends State<ProviderOngoingScreen> {
     );
     setState(() {});
   }
+
+  @override
+  void initState() {
+    super.initState();
+    getProviderLocation();
+  }
 }
