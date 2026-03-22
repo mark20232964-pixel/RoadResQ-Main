@@ -297,7 +297,10 @@ class _AddServiceTypeScreenState extends State<AddServiceTypeScreen> {
         ),
         trailing: const Icon(Icons.arrow_forward_ios, size: 20),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        onTap: onTap,
+        onTap: _isLoading ? null : onTap, // ← NEW: disable tap when loading
+        tileColor: _isLoading
+            ? Colors.grey[100]
+            : null, // ← NEW: grey out when loading
       ),
     );
   }
