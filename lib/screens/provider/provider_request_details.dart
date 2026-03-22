@@ -10,6 +10,7 @@ class ProviderRequestDetailsScreen extends StatelessWidget {
 
   final String requestId;
   final Map<String, dynamic> data;
+
   Future<void> completeService(BuildContext context) async {
     await FirebaseFirestore.instance
         .collection('requests')
@@ -31,6 +32,7 @@ class ProviderRequestDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           // 🟣 HEADER
@@ -66,6 +68,79 @@ class ProviderRequestDetailsScreen extends StatelessWidget {
                   style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 30),
+
+          // 🔘 ACTION BUTTONS
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                // ✅ COMPLETE
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => completeService(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: const Text(
+                      "Service Completed",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 15),
+
+                // ❌ CANCEL
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => cancelService(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: const Text(
+                      "Cancel Service",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 15),
+
+                // 💳 PAYMENT (UI ONLY)
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // TODO: payment logic
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: const Text(
+                      "Proceed to Payment",
+                      style: TextStyle(fontSize: 16),
+                    ),
                   ),
                 ),
               ],
