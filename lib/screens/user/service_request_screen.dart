@@ -63,4 +63,29 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen>
     _timeoutTimer?.cancel();
     super.dispose();
   }
+
+  // 📍 GET USER LOCATION
+  Future<void> _getUserLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return;
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.deniedForever) return;
+
+    _userLocation = await Geolocator.getCurrentPosition();
+
+    _markers.clear();
+    _markers.add(
+      Marker(
+        markerId: const MarkerId('user'),
+        position: LatLng(_userLocation!.latitude, _userLocation!.longitude),
+      ),
+    );
+
+    setState(() {});
+  }
 }
