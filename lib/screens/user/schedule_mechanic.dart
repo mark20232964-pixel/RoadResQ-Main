@@ -25,12 +25,86 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
   bool _startIsAm = true;
   bool _isLoading = false;
 
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+  final _repository = ScheduleRepository();
+
+  Future<void> _scheduleNow() async {
+    setState(() => _isLoading = true);
+    print(widget.schedule['location']);
+    final schedule = ScheduleModel(
+      userId: AuthService().currentUser!.uid,
+      providerId: widget.schedule['providerId'] as String,
+      issue: '',
+      location: widget.schedule['userLocation'],
+      providerLocation: widget.schedule['location'] as GeoPoint,
+      scheduledTime: DateTime(
+        _currentMonth.year,
+        _currentMonth.month,
+        _selectedDate!,
+        _startIsAm ? _startHour % 12 : (_startHour % 12) + 12,
+        _startMinute,
+      ),
+    );
+    try {
+      await _repository.createSchedule(schedule);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white),
+                SizedBox(width: 10),
+                Text(
+                  'Schedule booked successfully!',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.green.shade600,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        await Future.delayed(const Duration(seconds: 2));
+        if (mounted) Navigator.of(context).pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
-  
+  @override
+  Widget build(BuildContext context) {
+    final name = widget.schedule['name'] as String? ?? 'Mechanic';
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F7),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
+ }
 }
