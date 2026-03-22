@@ -348,6 +348,45 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
       ],
     );
   }
+  // Add _isLoading state:
+  bool _isLoading = false;
+
+// Add to build() Column as last child (outside Expanded):
+  _buildScheduleButton(),
+
+  Widget _buildScheduleButton() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 10,
+              offset: const Offset(0, -3)),
+        ],
+      ),
+      child: ElevatedButton(
+        onPressed: (_selectedDate != null && !_isLoading) ? _scheduleNow : null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: _primary,
+          disabledBackgroundColor: Colors.grey.shade300,
+          foregroundColor: Colors.white,
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+        ),
+        child: Text(
+          _selectedDate == null ? 'Pick a Date to Continue' : 'Schedule Now',
+          style: const TextStyle(
+              fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.3),
+        ),
+      ),
+    );
+  }
+
+  void _scheduleNow() {} // stub — wired in next commit
 
   Widget _buildSectionLabel(String label) {
     return Text(label,
