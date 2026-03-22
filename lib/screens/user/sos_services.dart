@@ -180,6 +180,39 @@ class _SosScreenState extends State<SosScreen> {
     }
   }
 
+  Future<void> _cancelSosAlert() async {
+    _positionStreamSubscription?.cancel();
+    _positionStreamSubscription = null;
+
+    if (_lastSosDocumentId == null) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      await FirebaseFirestore.instance.collection('sos_alerts').doc(_lastSosDocumentId).update({
+        'status': 'cancelled',
+        'cancelledAt': FieldValue.serverTimestamp(),
+      });
+
+      if (mounted) {
+        setState(() {
+          _sosActive = false;
+          _lastSosDocumentId = null;
+          _nearbyServices.clear();
+          _errorMessage = null;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('SOS alert cancelled'), backgroundColor: Colors.green),
+        );
+      }
+    } catch (e) {
+      _showError('Failed to cancel SOS: $e');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
