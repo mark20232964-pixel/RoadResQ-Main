@@ -297,8 +297,50 @@ Widget build(BuildContext context) {
       children: [
         Column(
           children: [
-            Container(),
-            Expanded(child: Container()),
+            Container(
+              padding: const EdgeInsets.only(
+                top: 50,
+                left: 20,
+                right: 20,
+                bottom: 20,
+              ),
+              decoration: const BoxDecoration(
+                color: Color(0xFF1B1B4B),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _searchController,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintText: "Search service",
+                        hintStyle: const TextStyle(color: Colors.white54),
+                        filled: true,
+                        fillColor: Colors.white12,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.search, color: Colors.white),
+                    onPressed: () {
+                      _searchService(_searchController.text);
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Container(),
+            ),
           ],
         ),
       ],
