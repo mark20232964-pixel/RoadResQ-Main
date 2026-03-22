@@ -248,7 +248,11 @@ class _SosScreenState extends State<SosScreen> {
         title: const Text('SOS Emergency'),
         centerTitle: true,
       ),
-      body: const Center(child: Text("SOS Screen")),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: Colors.red))
+          : _nearbyServices.isNotEmpty || _errorMessage != null
+              ? _buildServicesList()
+              : _buildSosButtonScreen(),
     );
   }
 }
