@@ -288,3 +288,20 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen>
     });
   }
 }
+
+// 🎨 UI
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: Stack(
+      children: [
+        Column(
+          children: [
+            Container(),
+            Expanded(child: Container()),
+          ],
+        ),
+      ],
+    ),
+  );
+}
