@@ -212,6 +212,31 @@ class _SosScreenState extends State<SosScreen> {
     }
   }
 
+  void _showError(String msg) {
+    if (mounted) {
+      setState(() {
+        _errorMessage = msg;
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _callNumber(String? phone) async {
+    if (phone == null || phone.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No phone number available')),
+      );
+      return;
+    }
+    final uri = Uri.parse('tel:$phone');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not open dialer')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
