@@ -130,6 +130,8 @@ class _ProviderOngoingScreenState extends State<ProviderOngoingScreen> {
             itemBuilder: (context, index) {
               final doc = requests[index];
               final data = doc.data() as Map<String, dynamic>;
+              GeoPoint userLoc = data['location'];
+              double distance = calculateDistance(userLoc);
               deleteIfExpired(doc);
 
               if (isExpired(data['timestamp'])) {
