@@ -331,6 +331,33 @@ class _UserEditProfileScreenState extends State<UserEditProfileScreen> {
 
               const SizedBox(height: 20),
 
+              // Birthday
+              GestureDetector(
+                onTap: () => _selectDate(context),
+                child: AbsorbPointer(
+                  child: TextFormField(
+                    controller: _dobController,
+                    style: const TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
+                    decoration: InputDecoration(
+                      labelText: 'Birthday (Optional)',
+                      labelStyle: const TextStyle(color: Colors.black54),
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      prefixIcon: Icon(Icons.cake, color: accentDarkBlue),
+                      hintText: 'DD/MM/YYYY',
+                      filled: true,
+                      fillColor: const Color(0xFFF5F5F5),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      suffixIcon: Icon(Icons.calendar_today, color: accentDarkBlue),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
 
             ]
           ),
