@@ -30,7 +30,13 @@ class _VehicleVerificationFormScreenState extends State<VehicleVerificationFormS
     super.dispose();
   }
 
-    Future<void> _saveVehicle() async {
+      Future<void> _saveVehicle() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       final user = FirebaseAuth.instance.currentUser;
 
@@ -54,9 +60,7 @@ class _VehicleVerificationFormScreenState extends State<VehicleVerificationFormS
       };
 
       // Save to Firestore
-      await FirebaseFirestore.instance
-          .collection("vehicles")
-          .add(vehicleData);
+      await FirebaseFirestore.instance.collection("vehicles").add(vehicleData);
 
       // Success
       ScaffoldMessenger.of(context).showSnackBar(
@@ -72,10 +76,15 @@ class _VehicleVerificationFormScreenState extends State<VehicleVerificationFormS
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
+        SnackBar(content: Text("Error saving vehicle: $e")),
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -120,21 +129,30 @@ SizedBox(
   width: double.infinity,
   height: 50,
   child: ElevatedButton(
-    onPressed: _saveVehicle,
+    onPressed: _isLoading ? null : _saveVehicle,
     style: ElevatedButton.styleFrom(
       backgroundColor: const Color(0xFF1B1B4B),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
       ),
     ),
-    child: const Text(
-      "Verify",
-      style: TextStyle(
-        fontSize: 18,
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
+    child: _isLoading
+        ? const SizedBox(
+            height: 20,
+            width: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Colors.white,
+            ),
+          )
+        : const Text(
+            "Verify",
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
   ),
 ),
 const SizedBox(height: 20),
