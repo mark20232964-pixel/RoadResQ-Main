@@ -31,6 +31,7 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 16),
+                    _buildMechanicProfile(name),
                     const SizedBox(height: 24),
                   ],
                 ),
@@ -64,6 +65,63 @@ class _ScheduleMechanicScreenState extends State<ScheduleMechanicScreen> {
           ),
           const Icon(Icons.favorite_border, color: Colors.white70, size: 22),
           const SizedBox(width: 8),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMechanicProfile(String name) {
+    final experience = widget.schedule['experience'] as String? ?? '';
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 4)),
+        ],
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 30,
+            backgroundColor: _primary.withOpacity(0.1),
+            backgroundImage: widget.schedule['avatar'] != null
+                ? NetworkImage(widget.schedule['avatar'] as String)
+                : null,
+            child: widget.schedule['avatar'] == null
+                ? Text(
+              name.isNotEmpty ? name[0].toUpperCase() : 'M',
+              style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: _primary),
+            )
+                : null,
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(name,
+                    style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1A1A1A))),
+                if (experience.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(experience,
+                      style: TextStyle(
+                          fontSize: 12, color: Colors.grey.shade500)),
+                ],
+              ],
+            ),
+          ),
         ],
       ),
     );
