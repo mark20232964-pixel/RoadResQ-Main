@@ -176,4 +176,32 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen>
       }
     });
   }
+
+  // 🔥 LISTEN REQUEST
+  void listenToRequest(String requestId) {
+    _requestListener = FirebaseFirestore.instance
+        .collection('requests')
+        .doc(requestId)
+        .snapshots()
+        .listen((doc) async {
+      final data = doc.data();
+      if (data == null) return;
+
+      if (data['status'] == 'accepted') {
+        _timeoutTimer?.cancel();
+
+        final providerId = data['providerId'];
+        if (providerId == null) return;
+
+        await fetchProviderDetails(providerId);
+
+        listenToProviderLocation(requestId);
+
+        setState(() {
+          _requestAccepted = true;
+          _isSearching = false;
+        });
+      }
+    });
+  }
 }
