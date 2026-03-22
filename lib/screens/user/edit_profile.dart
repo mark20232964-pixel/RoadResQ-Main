@@ -385,8 +385,36 @@ class _UserEditProfileScreenState extends State<UserEditProfileScreen> {
 
               const SizedBox(height: 48),
 
+              // Update Button – now dark blue
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: _isUpdating ? null : _updateProfile,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: accentDarkBlue,          // ← changed to dark blue
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    elevation: 2,
+                  ),
+                  child: _isUpdating
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 3,
+                          ),
+                        )
+                      : const Text(
+                          'Update Profile',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                ),
+              ),
 
-            ]
+              const SizedBox(height: 40),
+            ],
           ),
         ),
       ),
