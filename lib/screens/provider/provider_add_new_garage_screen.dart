@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AddGarageScreen extends StatefulWidget {
@@ -56,56 +58,82 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
 
     setState(() => _isLoading = true);
 
-    // ── TODO: Replace with real API / Firebase call ────────────────
-    await Future.delayed(const Duration(seconds: 2)); // fake delay
+    // Firebase call to add garage
+    try {
+      final user = FirebaseAuth.instance.currentUser;
 
-    setState(() => _isLoading = false);
+      if (user == null) {
+        throw Exception('User not logged in');
+      }
+    
 
-    if (!mounted) return;
+      await FirebaseFirestore.instance.collection('garages').add({
+        'name': _nameController.text.trim(),
+        'address': _addressController.text.trim(),
+        'contact': _contactController.text.trim(),
+        'email': _emailController.text.trim(),
+        'description': _descriptionController.text.trim(),
+        'services': selectedServices,
+        'createdBy': user.uid,
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFFE6F4E6),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircleAvatar(
-              radius: 40,
-              backgroundColor: Colors.green,
-              child: Icon(Icons.check, color: Colors.white, size: 50),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Success!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
-            ),
-            const Text(
-              'Garage Added. Thank You!',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context); // dialog
-                  Navigator.pop(context); // screen
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black87,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                child: const Text('OK', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)),
+      if (!mounted) return;
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          backgroundColor: const Color(0xFFE6F4E6),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircleAvatar(
+                radius: 40,
+                backgroundColor: Colors.green,
+                child: Icon(Icons.check, color: Colors.white, size: 50),
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+              const Text(
+                'Success!',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+              ),
+              const Text(
+                'Garage Added. Thank You!',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+              ),
+              const SizedBox(height: 24),
+                SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context); // dialog
+                    Navigator.pop(context); // screen
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black87,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text('OK', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to add garage: ${e.toString()}')),
+      );
+    } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+    }
   }
 
   @override
@@ -134,7 +162,7 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _nameController,
-                  cursorColor: const Color(0xFF6A48FF),
+                  cursorColor: const Color(0xFF120A4D),
                   style: const TextStyle(color: Colors.black87, fontSize: 16),
                   validator: (v) => v?.trim().isEmpty ?? true ? 'Required' : null,
                   decoration: _inputDecoration('e.g. ABC Motors'),
@@ -146,7 +174,7 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _addressController,
-                  cursorColor: const Color(0xFF6A48FF),
+                  cursorColor: const Color(0xFF120A4D),
                   style: const TextStyle(color: Colors.black87, fontSize: 16),
                   validator: (v) => v?.trim().isEmpty ?? true ? 'Required' : null,
                   decoration: _inputDecoration('e.g. 123, Main St, Colombo'),
@@ -158,7 +186,7 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _contactController,
-                  cursorColor: const Color(0xFF6A48FF),
+                  cursorColor: const Color(0xFF120A4D),
                   keyboardType: TextInputType.phone,
                   style: const TextStyle(color: Colors.black87, fontSize: 16),
                   validator: (v) {
@@ -175,7 +203,7 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _emailController,
-                  cursorColor: const Color(0xFF6A48FF),
+                  cursorColor: const Color(0xFF120A4D),
                   keyboardType: TextInputType.emailAddress,
                   style: const TextStyle(color: Colors.black87, fontSize: 16),
                   validator: (v) {
@@ -194,7 +222,7 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                 const SizedBox(height: 6),
                 TextFormField(
                   controller: _descriptionController,
-                  cursorColor: const Color(0xFF6A48FF),
+                  cursorColor: const Color(0xFF120A4D),
                   style: const TextStyle(color: Colors.black87, fontSize: 16),
                   minLines: 2,
                   maxLines: 2,
@@ -218,10 +246,10 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                       crossAxisSpacing: 8,
                       children: _serviceCategories.keys.map((service) {
                         return CheckboxListTile(
-                          title: Text(service, style: const TextStyle(fontSize: 15)),
+                          title: Text(service, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black54)),
                           value: _serviceCategories[service]!,
                           dense: true,
-                          activeColor: const Color(0xFF6A48FF),
+                          activeColor: const Color.fromARGB(255, 134, 142, 247),
                           onChanged: (bool? value) {
                             setState(() {
                               _serviceCategories[service] = value ?? false;
@@ -244,7 +272,7 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _submitGarage,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6A48FF),
+                      backgroundColor: const Color(0xFF120A4D),
                       foregroundColor: Colors.white,
                       disabledBackgroundColor: Colors.grey.shade400,
                       shape: RoundedRectangleBorder(
