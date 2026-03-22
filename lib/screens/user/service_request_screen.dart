@@ -145,4 +145,35 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen>
       setState(() {});
     }
   }
+
+  // 🔥 LIVE PROVIDER TRACKING
+  void listenToProviderLocation(String requestId) {
+    FirebaseFirestore.instance
+        .collection('requests')
+        .doc(requestId)
+        .snapshots()
+        .listen((doc) async {
+      final data = doc.data();
+      if (data == null) return;
+
+      if (data['providerLocation'] != null) {
+        GeoPoint loc = data['providerLocation'];
+
+        LatLng newPos = LatLng(loc.latitude, loc.longitude);
+
+        setState(() {
+          _providerLocation = newPos;
+
+          _markers.removeWhere((m) => m.markerId.value == 'provider');
+
+          _markers.add(
+            Marker(markerId: const MarkerId('provider'), position: newPos),
+          );
+        });
+
+        await _drawRoute();
+        calculateETA();
+      }
+    });
+  }
 }
