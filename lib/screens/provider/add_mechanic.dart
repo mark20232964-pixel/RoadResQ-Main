@@ -143,6 +143,55 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
   LatLng _currentPosition = const LatLng(6.9271, 79.8612);
 
   @override
+  void initState() {
+    super.initState();
+    _getLiveLocation(); // NEW: call live location on init
+  }
+
+  // NEW: Get user's current location + permission
+  Future<void> _getLiveLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Location services are disabled')),
+      );
+      return;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location permissions denied')),
+        );
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Location permissions permanently denied')),
+      );
+      return;
+    }
+
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    setState(() {
+      _currentPosition = LatLng(position.latitude, position.longitude);
+    });
+
+    // Animate camera to user's location
+    _mapController?.animateCamera(
+      CameraUpdate.newLatLngZoom(_currentPosition, 17.0),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GoogleMap(
