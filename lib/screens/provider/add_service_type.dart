@@ -1,6 +1,7 @@
 // lib/screens/provider/add_service_type.dart
 
 import 'package:flutter/material.dart';
+import 'add_mechanic.dart';
 
 class AddServiceTypeScreen extends StatefulWidget {
   const AddServiceTypeScreen({super.key});
@@ -42,8 +43,34 @@ class _AddServiceTypeScreenState extends State<AddServiceTypeScreen> {
               ),
             ),
             const SizedBox(height: 32),
-            // Cards will come in next commits
-            const Spacer(), // pushes content to top for now
+
+            // Mechanic card (first one from screenshot)
+            Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
+              elevation: 4,
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: const Color(0xFF6A48FF).withOpacity(0.2),
+                  child: const Icon(Icons.build, color: Color(0xFF6A48FF)),
+                ),
+                title: const Text('Mechanic'),
+                subtitle: const Text('Freelance or mobile mechanic'),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AddMechanicScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            const Spacer(), // keep for now - we'll add more cards soon
           ],
         ),
       ),
