@@ -21,6 +21,65 @@ class _SosScreenState extends State<SosScreen> {
     super.dispose();
   }
 
+  Future<void> _startSos() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+      _nearbyServices.clear();
+      _lastSosDocumentId = null;
+      _sosActive = false;
+    });
+
+    // 1. Permissions & services
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      _showError('Location services are disabled. Please enable them.');
+      return;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        _showError('Location permission denied');
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      _showError('Location permission permanently denied.\nPlease enable in settings.');
+      return;
+    }
+
+    try {
+      // 2. Get initial position
+      final initialPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      setState(() => _currentPosition = initialPosition);
+
+      // 3. Log SOS to Firestore
+      final sosDocId = await _logSosAlert(initialPosition.latitude, initialPosition.longitude);
+      if (sosDocId != null && mounted) {
+        setState(() {
+          _lastSosDocumentId = sosDocId;
+          _sosActive = true;
+        });
+      }
+
+      // 4. Initial nearby search
+      await _searchNearbyEmergencyServices(initialPosition.latitude, initialPosition.longitude);
+      _lastSearchedPosition = initialPosition;
+
+      // 5. Start live location stream
+      _startLiveLocationUpdates();
+
+      if (mounted) setState(() => _isLoading = false);
+    } catch (e) {
+      _showError('Failed to start SOS: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
