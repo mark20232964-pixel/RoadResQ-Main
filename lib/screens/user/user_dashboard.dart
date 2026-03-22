@@ -1,187 +1,218 @@
-// lib/screens/user/user_dashboard.dart
-
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'user_profile_screen.dart';
+import 'mechanics_near_you.dart';
 
 class UserDashboard extends StatefulWidget {
   const UserDashboard({super.key});
+
   @override
   State<UserDashboard> createState() => _UserDashboardState();
 }
 
 class _UserDashboardState extends State<UserDashboard> {
   int _selectedIndex = 0;
+
+  Position? _cachedPosition;
+  bool _isLoadingLocation = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _preloadLocation();
+      _precacheImages();
+    });
+  }
+
+  void _precacheImages() {
+    precacheImage(const AssetImage('assets/images/mechanic.jpg'), context);
+    precacheImage(const AssetImage('assets/images/garage.jpg'), context);
+  }
+
+  Future<void> _preloadLocation() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) return;
+
+      LocationPermission permission = await Geolocator.checkPermission();
+
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) return;
+
+      _cachedPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.medium,
+      );
+    } catch (_) {}
+  }
+
+  Future<void> _handleBookMechanic() async {
+    setState(() => _isLoadingLocation = true);
+
+    try {
+      Position position = _cachedPosition ??
+          await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.medium);
+
+      setState(() => _isLoadingLocation = false);
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MechanicsNearYouScreen(currentPosition: position),
+        ),
+      );
+
+      _preloadLocation();
+    } catch (e) {
+      setState(() => _isLoadingLocation = false);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor:
-          Colors.white, // we'll change to match your original later
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          // Header with location and SOS
-          Container(
-            padding: const EdgeInsets.only(
-              top: 50,
-              left: 20,
-              right: 20,
-              bottom: 30,
-            ),
-            decoration: const BoxDecoration(
-              color: Color(0xFF1B1B4B), // dark navy blue
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20),
-              ),
-            ),
-            child: Column(
-              children: [
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: Colors.white,
+
+          body: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.only(
+                    top: 50, left: 20, right: 20, bottom: 30),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF1B1B4B),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  ),
+                ),
+                child: Column(
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Location",
-                          style: TextStyle(color: Colors.white54, fontSize: 12),
-                        ),
-                        Text(
-                          "Bilzen, Tanjungbalai",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        Text("Dashboard",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
+                        Icon(Icons.error, color: Colors.red),
                       ],
                     ),
-                    Icon(
-                      Icons.error,
-                      color: Colors.red,
-                      size: 30,
-                    ), // SOS Icon
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "Search Service",
-                          prefixIcon: const Icon(Icons.search),
-                          filled: true,
-                          fillColor: Colors.white12,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide.none,
-                          ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: "Search Service",
+                        prefixIcon: const Icon(Icons.search),
+                        filled: true,
+                        fillColor: Colors.white12,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide.none,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white12,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: const Icon(Icons.tune, color: Colors.white),
-                    ),
                   ],
                 ),
-              ],
-            ),
-          ),
-
-          // Temporary placeholder for the rest of the body
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                _buildOptionCard(
-                  "Book a\nMechanic",
-                  'assets/images/mechanic.jpg',
-                ),
-                const SizedBox(height: 15),
-                _buildOptionCard("Book a\nGarage", 'assets/images/garage.jpg'),
-              ],
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index; // still updates highlight color
-          });
-
-          if (index == 3) {
-            // profile avatar tapped
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const UserProfileScreen(),
               ),
-            );
-          } else {
-            // Optional: temporary feedback for other tabs (you can remove later)
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Tapped nav item $index')),
-            );
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.all(20),
+                  children: [
+                    GestureDetector(
+                      onTap: _handleBookMechanic,
+                      child: _buildCard(
+                          "Book a\nMechanic", 'assets/images/mechanic.jpg'),
+                    ),
+                    const SizedBox(height: 15),
+                    _buildCard("Book a\nGarage", 'assets/images/garage.jpg'),
+                  ],
+                ),
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag_outlined),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: CircleAvatar(
-              radius: 12,
-              backgroundImage: NetworkImage(
-                'https://via.placeholder.com/150',
-              ), // ← you can later use real user photo
+
+          // 🔥 FIXED NAV BAR
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFF2F2F2), // 👈 light grey
+              border: Border(
+                top: BorderSide(
+                  color: Colors.grey.shade300, // 👈 subtle line
+                  width: 1,
+                ),
+              ),
             ),
-            label: '',
+            child: BottomNavigationBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              currentIndex: _selectedIndex,
+              selectedItemColor: Colors.black,
+              unselectedItemColor: Colors.black54,
+              type: BottomNavigationBarType.fixed,
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              onTap: (index) {
+                setState(() => _selectedIndex = index);
+
+                if (index == 3) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const UserProfileScreen()),
+                  );
+                }
+              },
+              items: const [
+                BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+                BottomNavigationBarItem(icon: Icon(Icons.favorite), label: ''),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.shopping_bag), label: ''),
+                BottomNavigationBarItem(
+                  icon: CircleAvatar(
+                    radius: 12,
+                    backgroundImage:
+                        NetworkImage('https://via.placeholder.com/150'),
+                  ),
+                  label: '',
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
+        if (_isLoadingLocation)
+          Container(
+            color: Colors.black26,
+            child: const Center(child: CircularProgressIndicator()),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildCard(String title, String image) {
+    return Container(
+      height: 160,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25),
+        image: DecorationImage(image: AssetImage(image), fit: BoxFit.cover),
+      ),
+      padding: const EdgeInsets.all(25),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: const TextStyle(
+            color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold),
       ),
     );
   }
-}
-
-Widget _buildOptionCard(String title, String imagePath) {
-  return Container(
-    height: 160,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(25),
-      image: DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover),
-    ),
-    padding: const EdgeInsets.all(25),
-    alignment: Alignment.centerLeft,
-    child: Text(
-      title,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 26,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  );
 }
