@@ -36,78 +36,105 @@ class _AddServiceTypeScreenState extends State<AddServiceTypeScreen> {
       body: Stack(
         // ← NEW: Stack wrapper
         children: [
-          Padding(
-            // ← Your original body now inside Stack
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'What type of service do you provide?',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Choose one to create your provider profile',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                ),
-                const SizedBox(height: 32),
-                _buildServiceTile(
-                  icon: Icons.build,
-                  title: 'Mechanic',
-                  subtitle: 'Freelance or mobile mechanic',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AddMechanicScreen(),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-                _buildServiceTile(
-                  icon: Icons.garage,
-                  title: 'Garage / Workshop',
-                  subtitle: 'Coming soon',
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Garage / Workshop - Coming soon')),
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-                _buildServiceTile(
-                  icon: Icons.local_taxi,
-                  title: 'Tow Truck',
-                  subtitle: 'Coming soon',
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Tow Truck - Coming soon')),
-                    );
-                  },
-                ),
-                const SizedBox(height: 32),
-              ],
+          const Text(
+            'What type of service do you provide?',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
             ),
           ),
-
-          // Loading overlay - NEW in this commit
-          if (_isLoading)
-            Container(
-              color: Colors.black.withOpacity(0.3),
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
+          const SizedBox(height: 8),
+          const Text(
+            'Choose one to create your provider profile',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
             ),
+          ),
+          const SizedBox(height: 32),
+
+          // Mechanic card
+          _buildServiceTile(
+            icon: Icons.build,
+            title: 'Mechanic',
+            subtitle: 'Freelance or mobile mechanic',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddMechanicScreen(),
+                ),
+              );
+            },
+          ),
+
+          const SizedBox(height: 16),
+
+          // Garage card
+          _buildServiceTile(
+            icon: Icons.garage,
+            title: 'Garage / Workshop',
+            subtitle: 'Coming soon',
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text('Garage / Workshop - Coming soon')),
+              );
+            },
+          ),
+
+          const SizedBox(height: 16),
+
+          // Tow Truck card
+          _buildServiceTile(
+            icon: Icons.local_taxi,
+            title: 'Tow Truck',
+            subtitle: 'Coming soon',
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Tow Truck - Coming soon')),
+              );
+            },
+          ),
+
+          const SizedBox(height: 32),
+
+          // NEW in this commit: Service categories checkboxes grid
+          const Text(
+            'Select services you provide',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2, // 2 columns on small screens
+            childAspectRatio: 3.5, // make checkboxes wider
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+            children: _serviceCategories.keys.map((service) {
+              return CheckboxListTile(
+                title: Text(service),
+                value: _serviceCategories[service]!,
+                onChanged: (bool? value) {
+                  setState(() {
+                    _serviceCategories[service] = value ?? false;
+                  });
+                },
+                activeColor: const Color(0xFF6A48FF),
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+              );
+            }).toList(),
+          ),
+
+          const SizedBox(height: 32),
         ],
       ),
     );
