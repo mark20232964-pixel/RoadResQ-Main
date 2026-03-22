@@ -56,10 +56,13 @@ class _AddMechanicScreenState extends State<AddMechanicScreen> {
               ),
               const SizedBox(height: 24),
 
-              // NEW: Location selection tile (placeholder for now)
               ListTile(
                 title: const Text('Select Mechanic Location'),
-                subtitle: const Text('Tap to open map and pick location'),
+                subtitle: Text(
+                  _selectedLocation == null
+                      ? 'Tap to open map and pick location'
+                      : 'Selected: ${_selectedLocation!.latitude.toStringAsFixed(4)}, ${_selectedLocation!.longitude.toStringAsFixed(4)}',
+                ),
                 trailing:
                     const Icon(Icons.location_on, color: Color(0xFF120A4D)),
                 tileColor: Colors.grey[100],
@@ -68,7 +71,6 @@ class _AddMechanicScreenState extends State<AddMechanicScreen> {
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 onTap: () {
-                  // Placeholder action - map picker coming in later commits
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                         content: Text('Map picker coming in next steps')),
@@ -77,6 +79,44 @@ class _AddMechanicScreenState extends State<AddMechanicScreen> {
               ),
 
               const Spacer(),
+
+              // NEW: Submit button + validation
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (!_formKey.currentState!.validate()) return;
+
+                    if (_selectedLocation == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please select location')),
+                      );
+                      return;
+                    }
+
+                    // Placeholder for future submit logic
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text(
+                              'Mechanic details validated - submit coming soon')),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF120A4D),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    elevation: 2,
+                  ),
+                  child: const Text(
+                    'Submit Mechanic Details',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 32),
             ],
           ),
         ),
