@@ -38,4 +38,46 @@ class _UserEditProfileScreenState extends State<UserEditProfileScreen> {
     super.initState();
     _loadUserData();
   }
+
+    Future<void> _loadUserData() async {
+    setState(() => _isLoading = true);
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      setState(() => _isLoading = false);
+      return;
+    }
+
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (doc.exists) {
+        final data = doc.data()!;
+
+        setState(() {
+          _firstNameController.text = data['firstName'] ?? '';
+          _lastNameController.text = data['lastName'] ?? '';
+          _phoneController.text = data['phone'] ?? '';
+          _profileImageUrl = data['profileImageUrl'];
+
+          if (data['dob'] != null) {
+            final timestamp = data['dob'] as Timestamp;
+            _selectedDob = timestamp.toDate();
+            _dobController.text =
+                "${_selectedDob!.day.toString().padLeft(2, '0')}/${_selectedDob!.month.toString().padLeft(2, '0')}/${_selectedDob!.year}";
+          }
+
+          _selectedGender = data['gender'];
+          _isLoading = false;
+        });
+      } else {
+        setState(() => _isLoading = false);
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+    }
+  }
 }
