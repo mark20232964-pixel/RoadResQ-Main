@@ -1,11 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-
 import 'provider_request_details.dart';
 
 class ProviderOngoingScreen extends StatefulWidget {
@@ -25,21 +23,8 @@ class _ProviderOngoingScreenState extends State<ProviderOngoingScreen> {
 
   StreamSubscription<Position>? _positionStream;
 
-  Future<void> getProviderLocation() async {
-    _providerLocation = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getProviderLocation();
-  }
-
   void startLiveTracking(String requestId) {
-    _positionStream?.cancel();
+    _positionStream?.cancel(); // stop previous if any
 
     _positionStream = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
@@ -64,9 +49,22 @@ class _ProviderOngoingScreenState extends State<ProviderOngoingScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    getProviderLocation();
+  }
+
+  @override
   void dispose() {
     stopTracking();
     super.dispose();
+  }
+
+  Future<void> getProviderLocation() async {
+    _providerLocation = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    setState(() {});
   }
 
   double calculateDistance(GeoPoint userLocation) {
@@ -104,9 +102,7 @@ class _ProviderOngoingScreenState extends State<ProviderOngoingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Ongoing Requests"),
-      ),
+      appBar: AppBar(title: const Text("Ongoing Requests")),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('requests')
@@ -130,18 +126,19 @@ class _ProviderOngoingScreenState extends State<ProviderOngoingScreen> {
             itemBuilder: (context, index) {
               final doc = requests[index];
               final data = doc.data() as Map<String, dynamic>;
+
               startLiveTracking(doc.id);
-
-              GeoPoint userLoc = data['location'];
-              double distance = calculateDistance(userLoc);
-
-              LatLng userLatLng = LatLng(userLoc.latitude, userLoc.longitude);
 
               deleteIfExpired(doc);
 
               if (isExpired(data['timestamp'])) {
                 return const SizedBox();
               }
+
+              GeoPoint userLoc = data['location'];
+              double distance = calculateDistance(userLoc);
+
+              LatLng userLatLng = LatLng(userLoc.latitude, userLoc.longitude);
 
               return GestureDetector(
                 onTap: () {
@@ -160,6 +157,12 @@ class _ProviderOngoingScreenState extends State<ProviderOngoingScreen> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                      ),
+                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,6 +220,26 @@ class _ProviderOngoingScreenState extends State<ProviderOngoingScreen> {
                             const Text(
                               "🚗 Ongoing",
                               style: TextStyle(color: Colors.green),
+                            ),
+                            const SizedBox(height: 15),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ElevatedButton.icon(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.call),
+                                  label: const Text("Call"),
+                                ),
+                                ElevatedButton.icon(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.chat),
+                                  label: const Text("Chat"),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {},
+                                  child: const Text("Payment"),
+                                ),
+                              ],
                             ),
                           ],
                         ),
