@@ -132,8 +132,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
   final TextEditingController _searchController = TextEditingController();
   List<dynamic> _suggestions = [];
 
-  final String apiKey =
-      "YOUR_ACTUAL_API_KEY_HERE"; // ← Replace with your real key
+  final String apiKey = "AIzaSyDC-Vg3GG5uDyDb5JuIzPKeKEIeUXwoXho";
 
   @override
   void initState() {
