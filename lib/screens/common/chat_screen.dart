@@ -92,8 +92,45 @@ class _ChatScreenState extends State<ChatScreen> {
       backgroundColor: const Color(0xFFF5F5F7),
       body: SafeArea(
         child: Column(
-          children: [],
+          children: [
+            _buildHeader(),
+            const Divider(height: 1, thickness: 1, color: Color(0xFFF0F0F0)),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.chevron_left, size: 28, color: _primary),
+            onPressed: () => Navigator.of(context).maybePop(),
+          ),
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: _primary.withOpacity(0.1),
+            child: Text(
+              _otherPartyName.isNotEmpty
+                  ? _otherPartyName[0].toUpperCase()
+                  : '?',
+              style: const TextStyle(
+                  fontSize: 14, fontWeight: FontWeight.w700, color: _primary),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              _otherPartyName.isNotEmpty ? _otherPartyName : '...',
+              style: const TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w700, color: _primary),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
     );
   }
