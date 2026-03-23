@@ -64,17 +64,21 @@ class _VehicleVerificationFormScreenState extends State<VehicleVerificationFormS
       // Save to Firestore
       await FirebaseFirestore.instance.collection("vehicles").add(vehicleData);
 
-      // Success
+      // Success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Vehicle Verified & Saved! ✅")),
       );
 
-      // Navigate to User Profile
+      // CHANGED: Clear all fields after success
+      _modelController.clear();
+      _plateController.clear();
+      _colorController.clear();
+
+      // CHANGED: Small delay + navigate to profile (gives user time to see success message)
+      await Future.delayed(const Duration(seconds: 1));
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => const UserProfileScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const UserProfileScreen()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -163,7 +167,7 @@ const SizedBox(height: 20),
   ),
     );
   }
-}
+
 Widget _buildField(String label, TextEditingController controller, String hint) {
     // CHANGED: isEmpty now checks both empty field AND submit was attempted
     // This prevents red borders from showing before user taps Verify
@@ -202,4 +206,6 @@ Widget _buildField(String label, TextEditingController controller, String hint) 
       const SizedBox(height: 16),
     ],
   );
+}
+
 }
