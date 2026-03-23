@@ -31,21 +31,23 @@ class _ProviderDashboardState extends State<ProviderDashboard> {
   // 🔥 REAL-TIME REQUEST LISTENER
   void listenForRequests() async {
     _providerId = await AuthService().currentUser?.uid;
+
     FirebaseFirestore.instance
         .collection('requests')
         .where('providerId', isEqualTo: _providerId)
         .where('status', isEqualTo: 'pending')
         .snapshots()
-        .listen((snapshot) {
-      if (snapshot.docs.isEmpty) return;
+        .listen((snapshot) async {
 
-      final doc = snapshot.docs.first;
-      print(doc);
-      if (_activePopupRequestId == doc.id) return;
+          var docs = await snapshot.docs;
+          if (docs.isEmpty) return;
 
-      _activePopupRequestId = doc.id;
+        final doc = snapshot.docs.first;
+        if (_activePopupRequestId == doc.id) return;
 
-      // showEmergencyPopup(doc);
+        _activePopupRequestId = doc.id;
+
+      showEmergencyPopup(doc);
     });
   }
 
@@ -118,7 +120,7 @@ class _ProviderDashboardState extends State<ProviderDashboard> {
 
   // ✅ ACCEPT
   Future<void> acceptRequest(String requestId) async {
-    final providerId = FirebaseAuth.instance.currentUser?.uid ?? "provider";
+    // final providerId = FirebaseAuth.instance.currentUser?.uid ?? "provider";
 
     await FirebaseFirestore.instance
         .collection('requests')
