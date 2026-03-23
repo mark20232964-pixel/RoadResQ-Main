@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:roadresq/screens/services/service.dart';
 
 import 'our_services_screen.dart';
 import 'add_service_type.dart';
@@ -19,6 +20,7 @@ class ProviderDashboard extends StatefulWidget {
 class _ProviderDashboardState extends State<ProviderDashboard> {
   int _selectedIndex = 0;
   String? _activePopupRequestId;
+  String? _providerId;
 
   @override
   void initState() {
@@ -27,21 +29,23 @@ class _ProviderDashboardState extends State<ProviderDashboard> {
   }
 
   // 🔥 REAL-TIME REQUEST LISTENER
-  void listenForRequests() {
+  void listenForRequests() async {
+    _providerId = await AuthService().currentUser?.uid;
     FirebaseFirestore.instance
         .collection('requests')
+        .where('providerId', isEqualTo: _providerId)
         .where('status', isEqualTo: 'pending')
         .snapshots()
         .listen((snapshot) {
       if (snapshot.docs.isEmpty) return;
 
       final doc = snapshot.docs.first;
-
+      print(doc);
       if (_activePopupRequestId == doc.id) return;
 
       _activePopupRequestId = doc.id;
 
-      showEmergencyPopup(doc);
+      // showEmergencyPopup(doc);
     });
   }
 
@@ -119,7 +123,7 @@ class _ProviderDashboardState extends State<ProviderDashboard> {
     await FirebaseFirestore.instance
         .collection('requests')
         .doc(requestId)
-        .update({'status': 'accepted', 'providerId': providerId});
+        .update({'status': 'accepted', 'providerId': _providerId});
 
     _activePopupRequestId = null;
   }
