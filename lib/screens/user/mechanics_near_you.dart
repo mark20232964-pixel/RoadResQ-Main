@@ -1,9 +1,7 @@
-// lib/screens/user/mechanics_near_you.dart
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart'; // ← THIS WAS MISSING
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'mechanic_details.dart';
 
 class MechanicsNearYouScreen extends StatelessWidget {
@@ -41,7 +39,7 @@ class MechanicsNearYouScreen extends StatelessWidget {
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text("No mechanics found nearby"));
+            return const Center(child: Text("No mechanics found"));
           }
 
           final docs = snapshot.data!.docs;
@@ -50,55 +48,58 @@ class MechanicsNearYouScreen extends StatelessWidget {
             final data = doc.data() as Map<String, dynamic>;
             final loc = data["location"] as GeoPoint?;
             if (loc == null) return false;
+
             final dist = _distance(loc);
             return dist <= 50;
           }).toList();
 
           nearby.sort((a, b) {
             final locA =
-                (a.data() as Map<String, dynamic>)["location"] as GeoPoint?;
+                (a.data() as Map<String, dynamic>)["location"] as GeoPoint;
             final locB =
-                (b.data() as Map<String, dynamic>)["location"] as GeoPoint?;
-            if (locA == null || locB == null) return 0;
-            final d1 = _distance(locA);
-            final d2 = _distance(locB);
-            return d1.compareTo(d2);
+                (b.data() as Map<String, dynamic>)["location"] as GeoPoint;
+
+            return _distance(locA).compareTo(_distance(locB));
           });
 
           if (nearby.isEmpty) {
-            return const Center(child: Text("No mechanics within 50km"));
+            return const Center(child: Text("No nearby mechanics"));
           }
 
           return ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: nearby.length,
             itemBuilder: (context, index) {
-              final data = nearby[index].data() as Map<String, dynamic>;
-              final loc = data["location"] as GeoPoint;
+              final doc = nearby[index];
+              final data = doc.data() as Map<String, dynamic>;
+
+              final GeoPoint loc = data["location"];
               final dist = _distance(loc);
 
-              final id = data["ownerUid"];
-              final name = data["name"] as String? ?? "Unnamed Mechanic";
-              final rating = (data["rating"] as num?)?.toDouble() ?? 4.5;
-              final reviewsCount = data["reviewsCount"] as int? ?? 230;
-              final isVerified = data["isVerified"] as bool? ?? true;
-              final joinedCount = data["joinedCount"] as int? ?? 24;
-              final photoUrl = data["photoUrl"] as String? ??
-                  'https://via.placeholder.com/300x140';
+              // 🔥 FIXED ID
+              final String id = doc.id;
+
+              final name = data["name"] ?? "Unnamed";
+              final rating = (data["rating"] ?? 4.5).toDouble();
+              final reviewsCount = data["reviewsCount"] ?? 0;
+              final isVerified = data["isVerified"] ?? false;
+              final joinedCount = data["joinedCount"] ?? 0;
+              final photoUrl =
+                  data["photoUrl"] ?? "https://via.placeholder.com/300x140";
 
               return GestureDetector(
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MechanicDetailsScreen(
-                        providerId: id,
+                      builder: (_) => MechanicDetailsScreen(
+                        providerId: id, // ✅ NOW SAFE
                         name: name,
                         mechanicLocation: LatLng(loc.latitude, loc.longitude),
                         rating: rating,
                         reviewsCount: reviewsCount,
-                        description: data["description"] as String? ??
-                            "Expert on-site vehicle assistance, specializing in diagnosing breakdown issues and performing quick repairs.",
+                        description: data["description"] ??
+                            "Professional mechanic service",
                         isVerified: isVerified,
                         joinedCount: joinedCount,
                         photoUrl: photoUrl,
@@ -151,37 +152,9 @@ class MechanicsNearYouScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                const Icon(Icons.star,
-                                    color: Colors.amber, size: 18),
-                                const SizedBox(width: 4),
-                                Text(
-                                  "${rating.toStringAsFixed(1)} ($reviewsCount)",
-                                  style: const TextStyle(color: Colors.white70),
-                                ),
-                                const SizedBox(width: 12),
-                                if (isVerified)
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: const Text(
-                                      "Verified",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 12),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
                             Text(
-                              "${dist.toStringAsFixed(1)} km away • $joinedCount Person Joined",
-                              style: const TextStyle(
-                                  color: Colors.white70, fontSize: 14),
+                              "${dist.toStringAsFixed(1)} km away",
+                              style: const TextStyle(color: Colors.white70),
                             ),
                           ],
                         ),
