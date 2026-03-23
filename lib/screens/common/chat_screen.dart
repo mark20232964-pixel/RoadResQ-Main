@@ -86,6 +86,15 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
+  String _formatTime(dynamic timestamp) {
+    if (timestamp == null) return '';
+    final dt = DateTime.parse(timestamp as String);
+    final hour = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
+    final minute = dt.minute.toString().padLeft(2, '0');
+    final period = dt.hour < 12 ? 'AM' : 'PM';
+    return '$hour:$minute $period';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,6 +104,12 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             _buildHeader(),
             const Divider(height: 1, thickness: 1, color: Color(0xFFF0F0F0)),
+            Expanded(
+              child: _isInitializing
+                  ? const Center(
+                  child: CircularProgressIndicator(color: _primary))
+                  : _buildMessageList(),
+            ),
           ],
         ),
       ),
@@ -131,6 +146,83 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMessageList() {
+    return StreamBuilder<List<Map<String, dynamic>>>(
+      stream: _messageRepository.getMessages(_chatId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+              child: CircularProgressIndicator(color: _primary));
+        }
+        if (snapshot.hasError) {
+          return Center(
+              child: Text('Something went wrong',
+                  style: TextStyle(color: Colors.grey.shade500)));
+        }
+        final messages = snapshot.data ?? [];
+        if (messages.isEmpty) {
+          return Center(
+            child: Text('No messages yet',
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade400)),
+          );
+        }
+        return ListView.builder(
+          controller: _scrollController,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          itemCount: messages.length,
+          itemBuilder: (_, i) => _buildBubble(messages[i]),
+        );
+      },
+    );
+  }
+
+  Widget _buildBubble(Map<String, dynamic> message) {
+    final isOwn = message['senderId'] == _currentUserId;
+    final text = message['text'] as String? ?? '';
+    final time = _formatTime(message['timestamp']);
+
+    return Align(
+      alignment: isOwn ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        constraints:
+        BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.72),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: isOwn ? _bubbleOwn : _bubbleOther,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(18),
+            topRight: const Radius.circular(18),
+            bottomLeft: Radius.circular(isOwn ? 18 : 4),
+            bottomRight: Radius.circular(isOwn ? 4 : 18),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment:
+          isOwn ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            Text(
+              text,
+              style: TextStyle(
+                fontSize: 14,
+                color: isOwn ? Colors.white : Colors.black87,
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              time,
+              style: TextStyle(
+                fontSize: 10,
+                color: isOwn ? Colors.white60 : Colors.grey.shade400,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
