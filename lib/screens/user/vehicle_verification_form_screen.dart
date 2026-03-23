@@ -23,7 +23,13 @@ class _VehicleVerificationFormScreenState extends State<VehicleVerificationFormS
   final _plateController = TextEditingController(text: "KS 5241");
   final _colorController = TextEditingController(text: "Red");
 
+  
+
   bool _isLoading = false;
+
+    final _modelFocus = FocusNode();
+  final _plateFocus = FocusNode();
+  final _colorFocus = FocusNode();
 
   @override
   void dispose() {
@@ -123,13 +129,49 @@ class _VehicleVerificationFormScreenState extends State<VehicleVerificationFormS
           ),
         ),
         const SizedBox(height: 32),
-        // Form fields will be added in next commits
-        _buildField("Vehicle Model", _modelController, "e.g. Civic", Icons.directions_car),
-const SizedBox(height: 24),
-_buildField("Number Plate", _plateController, "e.g. KS 5241", Icons.numbers),
-const SizedBox(height: 24),
-_buildField("Color", _colorController, "e.g. Red", Icons.palette),
-const SizedBox(height: 48),
+          const Text(
+    'Enter Vehicle Details',
+    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+  ),
+  const SizedBox(height: 24),
+  Card(
+    elevation: 4,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          _buildField(
+            "Vehicle Model",
+            _modelController,
+            "e.g. Civic",
+            Icons.directions_car,
+            focusNode: _modelFocus,
+            nextFocus: _plateFocus,
+          ),
+          const SizedBox(height: 16),
+          _buildField(
+            "Number Plate",
+            _plateController,
+            "e.g. KS 5241",
+            Icons.numbers,
+            focusNode: _plateFocus,
+            nextFocus: _colorFocus,
+          ),
+          const SizedBox(height: 16),
+          _buildField(
+            "Color",
+            _colorController,
+            "e.g. Red",
+            Icons.palette,
+            focusNode: _colorFocus,
+            nextFocus: null, // last field
+          ),
+        ],
+      ),
+    ),
+  ),
+  const SizedBox(height: 48),
 SizedBox(
   width: double.infinity,
   height: 50,
@@ -169,7 +211,8 @@ const SizedBox(height: 20),
     );
   }
 
-Widget _buildField(String label, TextEditingController controller, String hint, IconData icon) {
+Widget _buildField(String label, TextEditingController controller, String hint, IconData icon,{FocusNode? focusNode,     // ← ADDED this
+   FocusNode? nextFocus}) {
   final isEmpty = controller.text.trim().isEmpty && _isLoading;
 
   return Column(
