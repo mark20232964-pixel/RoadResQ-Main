@@ -125,11 +125,11 @@ class _VehicleVerificationFormScreenState extends State<VehicleVerificationFormS
         ),
         const SizedBox(height: 32),
         // Form fields will be added in next commits
-        _buildField("Vehicle Model", _modelController, "e.g. Civic"),
+        _buildField("Vehicle Model", _modelController, "e.g. Civic", Icons.directions_car),
 const SizedBox(height: 24),
-_buildField("Number Plate", _plateController, "e.g. KS 5241"),
+_buildField("Number Plate", _plateController, "e.g. KS 5241", Icons.numbers),
 const SizedBox(height: 24),
-_buildField("Color", _colorController, "e.g. Red"),
+_buildField("Color", _colorController, "e.g. Red", Icons.palette),
 const SizedBox(height: 48),
 SizedBox(
   width: double.infinity,
@@ -168,10 +168,8 @@ const SizedBox(height: 20),
     );
   }
 
-Widget _buildField(String label, TextEditingController controller, String hint) {
-    // CHANGED: isEmpty now checks both empty field AND submit was attempted
-    // This prevents red borders from showing before user taps Verify
-    final isEmpty = controller.text.trim().isEmpty && _isLoading;
+Widget _buildField(String label, TextEditingController controller, String hint, IconData icon) {
+  final isEmpty = controller.text.trim().isEmpty && _isLoading;
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,21 +185,28 @@ Widget _buildField(String label, TextEditingController controller, String hint) 
       const SizedBox(height: 8),
       TextField(
         controller: controller,
+        textInputAction: TextInputAction.next, // for keyboard Next
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: const TextStyle(color: Colors.grey),
-          border: UnderlineInputBorder(
+          prefixIcon: Icon(icon, color: Colors.grey),
+          focusedBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF6A48FF), width: 2),
+          ),
+          enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: isEmpty ? Colors.red : Colors.grey),
+          ),
+          errorBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.red, width: 2),
           ),
           errorText: isEmpty ? 'This field is required' : null,
           errorStyle: const TextStyle(color: Colors.red),
         ),
         onChanged: (value) {
-            if (value.trim().isNotEmpty) {
-              setState(() {}); // Rebuild to remove red/error text
-            }
-
-        }
+          if (value.trim().isNotEmpty) {
+            setState(() {});
+          }
+        },
       ),
       const SizedBox(height: 16),
     ],
