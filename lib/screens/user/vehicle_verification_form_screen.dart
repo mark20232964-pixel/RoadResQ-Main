@@ -1,3 +1,9 @@
+// vehicle_verification_form_screen.dart
+// Screen for entering vehicle details after selecting brand
+// Features: form fields with validation, icons, focus navigation,
+// loading spinner, Firestore save, success confetti, auto-clear
+// Navigation: from verify_vehicle_screen on brand tap → here
+// Next: brand details confirmation, image upload for proof
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
