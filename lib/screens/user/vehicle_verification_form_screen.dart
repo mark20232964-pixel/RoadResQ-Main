@@ -229,6 +229,7 @@ Widget _buildField(String label, TextEditingController controller, String hint, 
       const SizedBox(height: 8),
 TextField(
   controller: controller,
+  focusNode: focusNode,
   textInputAction: TextInputAction.next,
   keyboardType: TextInputType.text,
   textCapitalization: TextCapitalization.words,
