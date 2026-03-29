@@ -15,6 +15,21 @@ class AppPaymentsScreen extends StatefulWidget {
 class _AppPaymentsScreenState extends State<AppPaymentsScreen> {
   final user = FirebaseAuth.instance.currentUser;
 
+  Stream<QuerySnapshot>? _paymentsStream;
+
+  @override
+  void initState() {
+    super.initState();
+    if (user != null) {
+      _paymentsStream = FirebaseFirestore.instance
+          .collection("requests")
+          .where("userId", isEqualTo: user!.uid)
+          .where('status', isEqualTo: 'completed')
+          .orderBy("CompletedAt", descending: true)
+          .snapshots();
+    }
+  }
+
   Future<void> _onRefresh() async {
     await Future.delayed(const Duration(milliseconds: 800));
 
