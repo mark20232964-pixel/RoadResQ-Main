@@ -7,8 +7,8 @@ import 'package:geocoding/geocoding.dart';
 import 'user_profile_screen.dart';
 import 'service_request_screen.dart';
 import 'mechanics_near_you.dart';
-import '../user/garage_near_you.dart'; //
-import '../user/sos_services.dart';
+import '../user/garage_near_you.dart';
+import '../user/sos_services.dart'; // Make sure this import exists
 
 class UserDashboard extends StatefulWidget {
   const UserDashboard({super.key});
@@ -123,13 +123,16 @@ class _UserDashboardState extends State<UserDashboard> {
       backgroundColor: const Color(0xFFF5F5F5),
       body: Column(
         children: [
-          // 🔥 HEADER
+          // 🔥 HEADER (exactly same as before)
           Container(
             padding:
                 const EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 25),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF2C2A6A), Color(0xFF4A3FA7)],
+                colors: [
+                  Color.fromARGB(255, 12, 11, 42),
+                  Color.fromARGB(255, 51, 39, 168)
+                ],
               ),
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(25),
@@ -153,23 +156,12 @@ class _UserDashboardState extends State<UserDashboard> {
                                 fontWeight: FontWeight.bold)),
                       ],
                     ),
-                    // adding sos button
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SosScreen(),
-                          ),
-                        );
-                      },
-                      child: const CircleAvatar(
-                        backgroundColor: Colors.red,
-                        radius: 12,
-                        child: Icon(Icons.notifications,
-                            color: Colors.white, size: 14),
-                      ),
-                    ),
+                    const CircleAvatar(
+                      backgroundColor: Colors.red,
+                      radius: 12,
+                      child: Icon(Icons.notifications,
+                          color: Colors.white, size: 14),
+                    )
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -214,11 +206,81 @@ class _UserDashboardState extends State<UserDashboard> {
             ),
           ),
 
-          // BODY
+          // 🔥 BODY - SOS Tile at the TOP, then Mechanic and Garage cards
           Expanded(
             child: ListView(
               padding: const EdgeInsets.all(20),
               children: [
+                // 🔥 Emergency SOS Tile (at the top as you requested)
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SosScreen(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    height: 90,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFFE63946), // Red
+                          Color(0xFFFF6B6B), // Pinkish red
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.warning_amber_rounded,
+                            color: Color(0xFFE63946),
+                            size: 32,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Emergency SOS",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                "Get immediate roadside assistance",
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Book a Mechanic
                 _buildCard(
                   "Book a\nMechanic",
                   "assets/images/mechanic.jpg",
@@ -226,6 +288,8 @@ class _UserDashboardState extends State<UserDashboard> {
                       _isGettingLocation ? null : _getLocationAndOpenMechanics,
                 ),
                 const SizedBox(height: 20),
+
+                // Book a Garage
                 _buildCard(
                   "Book a\nGarage",
                   "assets/images/garage.jpg",
@@ -239,7 +303,7 @@ class _UserDashboardState extends State<UserDashboard> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFF6A48FF),
+        selectedItemColor: const Color.fromARGB(255, 34, 10, 141),
         unselectedItemColor: Colors.black87,
         showSelectedLabels: false,
         showUnselectedLabels: false,
@@ -249,7 +313,6 @@ class _UserDashboardState extends State<UserDashboard> {
             _selectedIndex = index;
           });
 
-          // Only Profile needs navigation (index 3)
           if (index == 3) {
             Navigator.push(
               context,
@@ -258,8 +321,6 @@ class _UserDashboardState extends State<UserDashboard> {
               ),
             );
           }
-          // Home (index 0), Favorite (1), Bag (2) will just change the tab
-          // (we will handle content switching in the next step)
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
