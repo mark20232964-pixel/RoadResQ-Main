@@ -17,9 +17,36 @@ class _ReviewScreenState extends State<ReviewScreen> {
       appBar: AppBar(
         title: const Text('Leave a Review'),
       ),
-      body: const Center(
-        child: Text('Review Screen - Coming Soon'),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'How was your experience?',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 30),
+
+            // Rating Stars
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(5, (index) {
+                return IconButton(
+                  icon: Icon(
+                    index < rating ? Icons.star : Icons.star_border,
+                    size: 50,
+                    color: index < rating ? Colors.amber : Colors.grey,
+                  ),
+                  onPressed: () => setState(() => rating = index + 1),
+                );
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
+// ... previous code
