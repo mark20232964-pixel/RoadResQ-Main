@@ -7,7 +7,8 @@ import 'package:geocoding/geocoding.dart';
 import 'user_profile_screen.dart';
 import 'service_request_screen.dart';
 import 'mechanics_near_you.dart';
-import '../user/garage_near_you.dart'; // ✅ FIXED IMPORT
+import '../user/garage_near_you.dart'; //
+import '../user/sos_services.dart';
 
 class UserDashboard extends StatefulWidget {
   const UserDashboard({super.key});
@@ -152,12 +153,23 @@ class _UserDashboardState extends State<UserDashboard> {
                                 fontWeight: FontWeight.bold)),
                       ],
                     ),
-                    const CircleAvatar(
-                      backgroundColor: Colors.red,
-                      radius: 12,
-                      child: Icon(Icons.notifications,
-                          color: Colors.white, size: 14),
-                    )
+                    // adding sos button
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SosScreen(),
+                          ),
+                        );
+                      },
+                      child: const CircleAvatar(
+                        backgroundColor: Colors.red,
+                        radius: 12,
+                        child: Icon(Icons.notifications,
+                            color: Colors.white, size: 14),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 20),
