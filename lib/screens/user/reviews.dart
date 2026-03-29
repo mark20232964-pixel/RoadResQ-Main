@@ -10,6 +10,17 @@ class ReviewScreen extends StatefulWidget {
 class _ReviewScreenState extends State<ReviewScreen> {
   int rating = 0;
   final TextEditingController commentController = TextEditingController();
+  bool isLoading = false;
+
+  Future<void> submitReview() async {
+    if (rating == 0) return;
+
+    setState(() => isLoading = true);
+
+    // TODO: Implement Firestore submission
+
+    setState(() => isLoading = false);
+  }
 
   @override
   Widget build(BuildContext context) {
