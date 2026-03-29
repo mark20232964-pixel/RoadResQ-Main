@@ -42,6 +42,32 @@ class _ReviewScreenState extends State<ReviewScreen> {
                 );
               }),
             ),
+
+            const SizedBox(height: 30),
+
+            // Comment Box
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: TextField(
+                controller: commentController,
+                maxLines: 5,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Tell us what you liked...',
+                ),
+              ),
+            ),
           ],
         ),
       ),
