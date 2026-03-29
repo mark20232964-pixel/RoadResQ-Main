@@ -15,6 +15,19 @@ class AppPaymentsScreen extends StatefulWidget {
 class _AppPaymentsScreenState extends State<AppPaymentsScreen> {
   final user = FirebaseAuth.instance.currentUser;
 
+  Future<void> _onRefresh() async {
+    await Future.delayed(const Duration(milliseconds: 800));
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Refreshed Successfully"),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (user == null) {
