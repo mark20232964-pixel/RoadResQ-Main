@@ -106,7 +106,7 @@ class _VehicleVerificationFormScreenState extends State<VehicleVerificationFormS
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 241, 240, 240),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -142,6 +142,7 @@ class _VehicleVerificationFormScreenState extends State<VehicleVerificationFormS
   const SizedBox(height: 24),
   Card(
     elevation: 4,
+    color: const Color.fromARGB(255, 206, 206, 206),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     child: Padding(
       padding: const EdgeInsets.all(16),
@@ -186,7 +187,7 @@ SizedBox(
     ? null
     : _saveVehicle,
     style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFF1B1B4B),
+      backgroundColor: const Color.fromARGB(255, 22, 22, 57),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
       ),
@@ -229,7 +230,7 @@ Widget _buildField(String label, TextEditingController controller, String hint, 
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: isEmpty ? Colors.red : Colors.black87,
+          color: isEmpty ? Colors.red : const Color.fromARGB(221, 95, 95, 95),
         ),
       ),
       const SizedBox(height: 8),
@@ -245,8 +246,8 @@ TextField(
       : null,
   decoration: InputDecoration(
     hintText: hint,
-    hintStyle: const TextStyle(color: Colors.grey),
-    prefixIcon: Icon(icon, color: Colors.grey),
+    hintStyle: const TextStyle(color: Color.fromARGB(255, 137, 136, 136)),
+    prefixIcon: Icon(icon, color: const Color.fromARGB(255, 116, 116, 116)),
     filled: true,
     fillColor: controller.text.isNotEmpty ? Colors.grey[50] : null,
     focusedBorder: const UnderlineInputBorder(
